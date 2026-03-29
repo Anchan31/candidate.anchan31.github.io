@@ -3,22 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#f8fafc" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Candidate Portal | Nextgen Recruitment Suite HR</title>
     <link rel="icon" type="image/png" href="favicon.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        whatsapp: '#25D366',
-                    }
-                }
-            }
-        }
-    </script>
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="stylesheet" href="tailwind-out.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
@@ -31,6 +25,23 @@
         body {
             font-family: var(--font-family);
             transition: background-color 0.3s ease, color 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+            overscroll-behavior-y: none;
+        }
+
+        /* Native App Touch & Select Behavior */
+        button, a, .glass-card, .stepper-dot, .mobile-nav-item, nav, .portal-locked-overlay {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Slide Push Transition */
+        .animate-push-in {
+            animation: pushIn 0.3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        @keyframes pushIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         .glass-card {
@@ -231,34 +242,184 @@
                 transform: translateY(0);
             }
         }
+
+        .stagger-item {
+            opacity: 0;
+            animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: calc(var(--delay, 0) * 0.1s);
+        }
+
+        .btn-focus {
+            outline: none;
+        }
+        .btn-focus:focus-visible {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5) !important;
+            outline: 2px solid var(--primary-color) !important;
+            outline-offset: 2px;
+        }
+
+        .btn-primary:active, .btn-secondary:active, .theme-input:active {
+            transform: scale(0.96);
+        }
+
+        /* Bottom Nav */
+        .mobile-bottom-nav {
+            display: none;
+        }
+
+        /* Bottom Sheet Modal & Mobile Tweaks */
+        @media (max-width: 768px) {
+            #user-menu {
+                display: none !important;
+            }
+            #jobs-pane, #apps-pane, #exposure-section {
+                margin-left: -1.5rem;
+                margin-right: -1.5rem;
+            }
+            #jobs-pane .glass-card, #apps-pane .glass-card, #exposure-section .glass-card {
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+                border-top: none;
+                box-shadow: none !important;
+                border-bottom: 1px solid rgba(0,0,0,0.05);
+            }
+            .dark #jobs-pane .glass-card, .dark #apps-pane .glass-card, .dark #exposure-section .glass-card {
+                border-bottom: 1px solid rgba(255,255,255,0.05);
+            }
+
+            .mobile-bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border-top: 1px solid rgba(0,0,0,0.05);
+                z-index: 90;
+                padding-bottom: env(safe-area-inset-bottom, 0);
+                box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+            }
+            .dark .mobile-bottom-nav {
+                background: rgba(15, 23, 42, 0.9);
+                border-top-color: rgba(255,255,255,0.05);
+            }
+            .mobile-nav-item {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 0.75rem 0;
+                color: #64748b;
+                font-size: 0.65rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                transition: all 0.2s;
+            }
+            .dark .mobile-nav-item {
+                color: #94a3b8;
+            }
+            .mobile-nav-item.active {
+                color: var(--primary-color);
+            }
+            .mobile-nav-item i {
+                font-size: 1.25rem;
+                margin-bottom: 0.25rem;
+                transition: transform 0.2s;
+            }
+            .mobile-nav-item.active i {
+                transform: translateY(-2px);
+            }
+
+            .auth-modal-content {
+                margin-top: auto;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                transform: translateY(100%);
+                animation: slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+            @keyframes slideUpSheet {
+                from { transform: translateY(100%); }
+                to { transform: translateY(0); }
+            }
+            #auth-modal-overlay:not(.hidden) {
+                align-items: flex-end;
+                padding: 0;
+            }
+            .auth-modal-content .glass-card {
+                border-radius: 1.5rem;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0));
+            }
+            
+            /* Action Container Bottom Sticky Mobile */
+            #jd-action-container {
+                position: fixed;
+                bottom: 60px; /* Above nav bar */
+                left: 0;
+                right: 0;
+                padding: 1rem;
+                background: rgba(255, 255, 255, 0.85);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-top: 1px solid rgba(0,0,0,0.05);
+                z-index: 50;
+                box-shadow: 0 -10px 20px -5px rgba(0,0,0,0.05);
+                border-top-left-radius: 1.5rem;
+                border-top-right-radius: 1.5rem;
+                justify-content: stretch;
+            }
+            .dark #jd-action-container {
+                background: rgba(15, 23, 42, 0.85);
+                border-top-color: rgba(255,255,255,0.05);
+            }
+            #jd-action-container > button, #jd-action-container > div {
+                flex: 1;
+            }
+            #jd-action-container > button[title="Share Job"] {
+                flex: 0 0 60px !important;
+                width: 60px !important;
+            }
+            #job-details-view {
+                padding-bottom: 8rem;
+            }
+            #portal-view {
+                padding-bottom: 5rem;
+            }
+        }
     </style>
 </head>
 
 <body class="bg-slate-50 dark:bg-[#0f172a] min-h-screen text-slate-900 dark:text-slate-100 antialiased">
 
     <!-- Navbar -->
-    <nav class="sticky top-0 z-50 glass-card border-b border-slate-200 dark:border-slate-800 px-6 py-4">
+    <nav class="sticky top-0 z-50 glass-card border-b border-slate-200 dark:border-slate-800 px-4 md:px-6 py-3 md:py-4">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 md:gap-3">
                 <div
-                    class="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
-                    <i class="fas fa-users-rays"></i>
+                    class="w-8 h-8 md:w-10 md:h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 flex-shrink-0">
+                    <i class="fas fa-users-rays text-sm md:text-base"></i>
                 </div>
                 <h1
-                    class="text-xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-blue-200">
-                    Nextgen Recruitment Suite <span class="text-slate-400 font-medium">| Portal</span>
+                    class="text-lg md:text-xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-blue-200 truncate pr-2">
+                    NRS <span class="hidden sm:inline text-slate-400 font-medium">| Portal</span>
                 </h1>
             </div>
 
-            <div class="flex items-center gap-4">
-                <button id="theme-toggle"
-                    class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                    <i class="fas fa-moon dark:hidden"></i>
-                    <i class="fas fa-sun hidden dark:inline"></i>
+            <div class="flex items-center gap-2 md:gap-4">
+                <button id="theme-toggle" aria-label="Toggle Theme"
+                    class="btn-focus w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                    <i class="fas fa-moon dark:hidden text-slate-600"></i>
+                    <i class="fas fa-sun hidden dark:inline text-slate-300"></i>
                 </button>
-                <div id="user-menu" class="hidden flex items-center gap-4">
-                    <button id="btn-nav-profile"
-                        class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
+                <div id="user-menu" class="hidden flex items-center gap-2 md:gap-4">
+                    <button id="btn-nav-profile" aria-label="User Profile"
+                        class="btn-focus flex items-center gap-2.5 px-2 md:px-3 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer">
                         <div id="user-avatar"
                             class="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-lg flex items-center justify-center text-sm font-black flex-shrink-0">
                             C</div>
@@ -269,14 +430,14 @@
                         </div>
                         <i class="fas fa-chevron-down text-[10px] text-slate-400 hidden md:inline"></i>
                     </button>
-                    <button id="btn-logout"
-                        class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-400 hover:text-red-500 transition-all"
+                    <button id="btn-logout" aria-label="Sign Out"
+                        class="btn-focus w-10 h-10 hidden md:flex items-center justify-center rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-400 hover:text-red-500 transition-all"
                         title="Logout">
                         <i class="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
                 <button id="btn-show-auth" onclick="toggleAuthModal(true, 'login')"
-                    class="btn-primary !py-2 text-sm">Sign In</button>
+                    class="btn-primary btn-focus !py-2 text-sm">Sign In</button>
             </div>
         </div>
     </nav>
@@ -375,7 +536,7 @@
         </div>
 
         <!-- Profile View -->
-        <div id="profile-view" class="hidden max-w-4xl mx-auto py-8 space-y-8 animate-fade-in">
+        <div id="profile-view" class="hidden max-w-4xl mx-auto py-8 space-y-8 animate-push-in">
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <h2 class="text-4xl font-black text-slate-900 dark:text-white">Setup Your Profile</h2>
@@ -611,38 +772,46 @@
                     <h2 id="greeting" class="text-4xl font-black text-slate-800 dark:text-white">Hello, Candidate!</h2>
                     <p class="text-slate-500 dark:text-slate-400 mt-1">Explore job openings and track your application
                         status here.</p>
+                        
+                    <!-- Search Filter Action for Mobile -->
+                    <button onclick="toggleMobileFilters()" class="md:hidden mt-4 w-fit btn-secondary flex items-center justify-center gap-2 px-4 !py-2.5 text-xs text-blue-600 font-black">
+                        <i class="fas fa-filter"></i> Search & Filters
+                    </button>
                 </div>
 
-                <div class="flex p-1 bg-slate-100 dark:bg-slate-800/50 rounded-2xl w-fit">
+                <div class="hidden md:flex p-1 bg-slate-100 dark:bg-slate-800/50 rounded-xl w-fit">
                     <button id="tab-jobs"
-                        class="px-6 py-2.5 rounded-xl font-bold text-sm transition-all bg-white dark:bg-slate-800 shadow-sm text-blue-600">Browse
+                        class="btn-focus px-6 py-2.5 rounded-xl font-bold text-sm transition-all bg-white dark:bg-slate-800 shadow-sm text-blue-600">Browse
                         Jobs</button>
                     <button id="tab-apps"
-                        class="px-6 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-500 hover:text-slate-700">My
+                        class="btn-focus px-6 py-2.5 rounded-xl font-bold text-sm transition-all text-slate-500 hover:text-slate-700">My
                         Applications</button>
                 </div>
             </div>
 
             <!-- Search & Filter Bar -->
-            <div id="jobs-filter-bar" class="glass-card p-4 rounded-2xl flex flex-col md:flex-row items-center gap-3">
+            <div id="mobile-filter-wrapper" class="hidden md:block">
+            <div id="jobs-filter-bar" class="glass-card p-3 md:p-4 rounded-[1.5rem] flex flex-col md:flex-row items-center gap-3">
                 <div class="relative flex-1 w-full">
                     <i
-                        class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
-                    <input type="text" id="job-search-input" placeholder="Search by title, skill or keyword..."
-                        class="theme-input pl-10 !py-2.5 text-sm">
+                        class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
+                    <input type="text" id="job-search-input" placeholder="Search roles, skills..."
+                        class="theme-input pl-10 !py-3 text-sm rounded-xl w-full border-none shadow-inner bg-slate-100 dark:bg-slate-900/50">
                 </div>
-                <select id="job-filter-dept" class="theme-input w-full md:w-48 !py-2.5 text-sm">
-                    <option value="">All Departments</option>
-                </select>
-                <select id="job-filter-location" class="theme-input w-full md:w-44 !py-2.5 text-sm">
-                    <option value="">All Locations</option>
-                </select>
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <select id="job-filter-dept" class="theme-input flex-1 md:w-48 !py-3 text-xs md:text-sm rounded-xl border-none shadow-sm dark:bg-slate-900/50">
+                        <option value="">All Departments</option>
+                    </select>
+                    <select id="job-filter-location" class="theme-input flex-1 md:w-44 !py-3 text-xs md:text-sm rounded-xl border-none shadow-sm dark:bg-slate-900/50">
+                        <option value="">All Locations</option>
+                    </select>
+                </div>
                 <button id="job-filter-clear" onclick="clearJobFilters()"
-                    class="btn-secondary px-4 !py-2.5 text-sm whitespace-nowrap flex-shrink-0">
-                    <i class="fas fa-times mr-1.5"></i>Clear
+                    class="btn-focus w-full md:w-auto px-5 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold text-sm transition-colors whitespace-nowrap flex-shrink-0">
+                    <i class="fas fa-times mr-1.5"></i>Reset Filters
                 </button>
             </div>
-            <p id="jobs-count-label" class="text-xs font-bold text-slate-400 uppercase tracking-wider -mt-4 px-1"></p>
+            </div>
             <!-- Jobs Listing -->
             <div id="jobs-pane" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
                 <!-- Job cards will be injected here -->
@@ -698,7 +867,7 @@
         </div>
 
         <!-- Candidate Profile View -->
-        <div id="candidate-profile-view" class="hidden max-w-4xl mx-auto py-8 space-y-6 animate-fade-in">
+        <div id="candidate-profile-view" class="hidden max-w-4xl mx-auto py-8 space-y-6 animate-push-in">
             <div class="flex items-center gap-4">
                 <button onclick="window.showView('portal-view')"
                     class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
@@ -727,6 +896,10 @@
                 </div>
                 <button onclick="openEditProfile()" class="btn-primary px-6 self-start md:self-center flex-shrink-0">
                     <i class="fas fa-pen mr-2"></i>Edit Profile
+                </button>
+                <!-- Mobile Logout -->
+                <button onclick="signOut(auth)" class="md:hidden w-full mt-4 flex items-center justify-center gap-2 py-3 rounded-2xl bg-red-50 text-red-600 font-bold border border-red-100">
+                    <i class="fas fa-sign-out-alt"></i>Sign Out
                 </button>
             </div>
 
@@ -772,8 +945,47 @@
             </div>
         </div>
 
+        <!-- Application Details View -->
+        <div id="app-details-view" class="hidden max-w-4xl mx-auto py-8 space-y-6 animate-push-in">
+            <div class="flex items-center gap-4">
+                <button onclick="window.showView('portal-view')"
+                    class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                    <i class="fas fa-arrow-left text-slate-600 dark:text-slate-300"></i>
+                </button>
+                <div class="flex-1">
+                    <span id="app-status-badge" class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-lg">Status</span>
+                </div>
+            </div>
+
+            <!-- Header Card (Mirror Job Details) -->
+            <div class="glass-card rounded-3xl p-8 flex flex-col md:flex-row gap-6 items-start md:items-center">
+                <div class="w-16 h-16 bg-blue-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-3xl text-blue-600 flex-shrink-0">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="flex-1">
+                    <h2 id="app-job-title" class="text-3xl font-black text-slate-900 dark:text-white leading-tight">Job Title</h2>
+                    <p id="app-company" class="text-slate-500 font-medium mt-1">Company Name</p>
+                    <p id="app-date" class="text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-widest">Applied on 29/03/2026</p>
+                </div>
+            </div>
+
+            <!-- Timeline Card -->
+            <div class="glass-card rounded-3xl p-8 space-y-6">
+                <h3 class="text-lg font-black text-slate-800 dark:text-white">Application Status</h3>
+                <div id="app-timeline-container" class="py-4">
+                    <!-- Timeline will be injected here -->
+                </div>
+            </div>
+
+            <!-- Company Contact/About Sidebar Style -->
+            <div class="glass-card rounded-3xl p-6 bg-slate-50/50 dark:bg-slate-800/20">
+                <h3 class="text-sm font-black uppercase tracking-widest text-slate-400 mb-4">Note from the team</h3>
+                <p class="text-sm text-slate-500 leading-relaxed italic">Our recruitment team is currently reviewing your application. You'll receive real-time updates here as your application moves through the stages.</p>
+            </div>
+        </div>
+
         <!-- Job Details View -->
-        <div id="job-details-view" class="hidden max-w-4xl mx-auto py-8 space-y-6 animate-fade-in">
+        <div id="job-details-view" class="hidden max-w-4xl mx-auto py-8 space-y-6 animate-push-in">
             <div class="flex items-center gap-4">
                 <button onclick="window.showView('portal-view')"
                     class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
@@ -783,7 +995,7 @@
                     <span id="jd-dept"
                         class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-lg">Department</span>
                 </div>
-                <div id="jd-action-container">
+                <div id="jd-action-container" class="flex items-center gap-3">
                     <button id="jd-apply-btn" class="btn-primary px-6">Apply Now</button>
                 </div>
             </div>
@@ -846,6 +1058,22 @@
 
     </main>
 
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-bottom-nav">
+        <button id="nav-mobile-jobs" onclick="document.getElementById('tab-jobs').click()" class="mobile-nav-item active btn-focus" aria-label="Jobs">
+            <i class="fas fa-briefcase"></i>
+            <span>Jobs</span>
+        </button>
+        <button id="nav-mobile-apps" onclick="document.getElementById('tab-apps').click()" class="mobile-nav-item btn-focus hidden" aria-label="Applications">
+            <i class="fas fa-folder-open"></i>
+            <span>Apps</span>
+        </button>
+        <button id="nav-mobile-profile" onclick="document.getElementById('btn-nav-profile').click()" class="mobile-nav-item btn-focus hidden" aria-label="Profile">
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
+        </button>
+    </nav>
+
     <!-- Global Processing Loader -->
     <div id="app-loader"
         class="fixed inset-0 z-[100] bg-slate-50/80 dark:bg-slate-900/80 backdrop-blur-sm flex items-center justify-center hidden">
@@ -896,7 +1124,7 @@
         const CLOUDINARY_PRESET = 'resume_uploads';
 
         // Elements
-        const views = ['profile-view', 'portal-view', 'candidate-profile-view', 'job-details-view'];
+        const views = ['profile-view', 'portal-view', 'candidate-profile-view', 'job-details-view', 'app-details-view'];
         const loader = document.getElementById('app-loader');
 
         // --- HELPERS ---
@@ -914,18 +1142,30 @@
 
             if (currentUser) {
                 userMenu.classList.remove('hidden');
-                if (signInBtn) signInBtn.classList.add('hidden');
+                if (signInBtn) signInBtn.style.display = 'none';
+                document.getElementById('nav-mobile-apps').classList.remove('hidden');
+                document.getElementById('nav-mobile-profile').classList.remove('hidden');
             } else {
                 userMenu.classList.add('hidden');
-                if (signInBtn) {
-                    signInBtn.classList.remove('hidden');
-                }
+                if (signInBtn) signInBtn.style.display = 'inline-flex';
+                document.getElementById('nav-mobile-apps').classList.add('hidden');
+                document.getElementById('nav-mobile-profile').classList.add('hidden');
+            }
+
+            // Update mobile nav active states based on view
+            if (viewId === 'candidate-profile-view' || viewId === 'profile-view') {
+                document.querySelectorAll('.mobile-nav-item').forEach(item => item.classList.remove('active'));
+                document.getElementById('nav-mobile-profile').classList.add('active');
             }
 
             // Re-apply settings when portal is visible so Exposure section elements exist
             if (viewId === 'portal-view' && portalSettings) {
                 applySettings();
             }
+        };
+
+        window.toggleMobileFilters = () => {
+            document.getElementById('mobile-filter-wrapper').classList.toggle('hidden');
         };
 
         window.toggleAuthModal = (show, mode = 'login') => {
@@ -1299,6 +1539,7 @@
 
         let allJobsCache = [];
         let jobsUnsubscribe = null;
+        let initialJobChecked = false;
 
         const subscribeToJobs = () => {
             if (jobsUnsubscribe) return; // Prevent multiple listeners
@@ -1306,6 +1547,16 @@
             jobsUnsubscribe = onSnapshot(q, (snapshot) => {
                 allJobsCache = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 applyJobFilters();
+
+                if (!initialJobChecked) {
+                    initialJobChecked = true;
+                    // Check URL for shared job id
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const sharedJobId = urlParams.get('job');
+                    if (sharedJobId && window.viewJobDetails) {
+                        setTimeout(() => window.viewJobDetails(sharedJobId), 100);
+                    }
+                }
             });
         };
 
@@ -1468,6 +1719,28 @@
             }
         };
 
+        window.shareJob = (jobId) => {
+            const url = window.location.origin + window.location.pathname + '?job=' + jobId;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Job Opening',
+                    text: 'Check out this job opening!',
+                    url: url
+                }).catch(err => {
+                    if (err.name !== 'AbortError') {
+                        console.error('Error sharing:', err);
+                    }
+                });
+            } else {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Job link copied to clipboard!');
+                }).catch(err => {
+                    console.error('Failed to copy link', err);
+                    prompt('Copy this link to share the job:', url);
+                });
+            }
+        };
+
         // --- FILTER & RENDER JOBS ---
         const populateFilterDropdowns = () => {
             const depts = [...new Set(openJobs.map(j => j.department).filter(Boolean))];
@@ -1500,6 +1773,75 @@
             document.getElementById('job-filter-dept').value = '';
             document.getElementById('job-filter-location').value = '';
             renderJobs();
+        };
+
+        // --- APPLICATION DETAILS VIEW LOGIC ---
+        window.viewAppDetails = (appId) => {
+            const app = myApplications.find(a => a.id === appId);
+            if (!app) return;
+
+            const job = allJobsCache.find(j => j.id === app.jobId) || { title: app.jobId, department: 'General', location: 'Remote', budget: 0 };
+            
+            // Header Info
+            document.getElementById('app-job-title').innerText = job.title;
+            let companyName = job.company || portalSettings?.companyName || portalSettings?.brandName || "Brawn Laboratories Ltd";
+            document.getElementById('app-company').innerText = companyName;
+            document.getElementById('app-date').innerText = `Applied on ${new Date(app.appliedAt?.seconds * 1000 || Date.now()).toLocaleDateString()}`;
+
+            // Status Badge
+            const stageColors = {
+                'Applied': 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
+                'Screening': 'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400',
+                'Interview': 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400',
+                'Selected': 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400',
+                'Hired': 'bg-green-600 text-white',
+                'Rejected': 'bg-red-100 text-red-600'
+            };
+            const badge = document.getElementById('app-status-badge');
+            badge.innerText = app.stage || 'Applied';
+            badge.className = `px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${stageColors[app.stage] || 'bg-slate-100 text-slate-600'}`;
+
+            // Timeline
+            const stages = ['Applied', 'Screening', 'Interview', 'Selected', 'Hired'];
+            const currentStageIdx = stages.indexOf(app.stage) !== -1 ? stages.indexOf(app.stage) : (app.stage === 'Rejected' ? -1 : 0);
+            const isRejected = app.stage === 'Rejected';
+
+            const timelineContainer = document.getElementById('app-timeline-container');
+            if (isRejected) {
+                timelineContainer.innerHTML = `
+                    <div class="w-full bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/20 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 animate-push-in text-center md:text-left">
+                        <div class="w-16 h-16 rounded-2xl bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 flex-shrink-0">
+                            <i class="fas fa-circle-xmark text-4xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="text-xl font-black text-red-600 uppercase tracking-wider mb-2">Application Rejected</h4>
+                            <p class="text-sm text-red-500/80 font-bold leading-relaxed">
+                                We appreciate the time and effort you invested in applying for this role. 
+                                Although we aren't moving forward at this stage, we encourage you to apply for other roles in the future!
+                            </p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                timelineContainer.innerHTML = `
+                    <div class="flex items-center w-full pb-8">
+                        ${stages.map((stg, idx) => `
+                            <div class="flex-1 flex flex-col items-center relative">
+                                <!-- Line -->
+                                ${idx < stages.length - 1 ? `
+                                    <div class="absolute top-[5px] left-1/2 w-full h-0.5 ${idx < currentStageIdx ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-700'}"></div>
+                                ` : ''}
+                                <!-- Dot -->
+                                <div class="w-3 h-3 rounded-full z-10 relative ${idx <= currentStageIdx ? 'bg-blue-600 ring-8 ring-blue-100 dark:ring-blue-900/20' : 'bg-slate-200 dark:bg-slate-700'} transition-all duration-500"></div>
+                                <!-- Label -->
+                                <span class="mt-5 text-[9px] md:text-[11px] font-black uppercase tracking-tight ${idx <= currentStageIdx ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'} whitespace-nowrap">${stg}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            showView('app-details-view');
         };
 
         // --- JOB DETAILS RENDER ---
@@ -1546,11 +1888,20 @@
             // Action button logic
             const container = document.getElementById('jd-action-container');
             const applied = myApplications.find(a => a.jobId === job.id);
+            
+            let applyBtnHtml = '';
             if (applied) {
-                container.innerHTML = `<button disabled class="btn-secondary px-6 cursor-not-allowed opacity-70"><i class="fas fa-check-circle text-emerald-500 mr-2"></i>Applied</button>`;
+                applyBtnHtml = `<button disabled class="btn-secondary px-6 cursor-not-allowed opacity-70"><i class="fas fa-check-circle text-emerald-500 mr-2"></i>Applied</button>`;
             } else {
-                container.innerHTML = `<button onclick="applyToJob('${job.id}'); showView('portal-view');" class="btn-primary px-6">${portalSettings?.customCtaText || 'Apply Now'}</button>`;
+                applyBtnHtml = `<button onclick="applyToJob('${job.id}'); showView('portal-view');" class="btn-primary px-6">${portalSettings?.customCtaText || 'Apply Now'}</button>`;
             }
+
+            container.innerHTML = `
+                <button onclick="window.shareJob('${job.id}')" class="btn-secondary px-4 !py-2.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 transition" title="Share Job">
+                    <i class="fas fa-share-nodes"></i>
+                </button>
+                ${applyBtnHtml}
+            `;
 
             window.showView('job-details-view');
         };
@@ -1571,7 +1922,6 @@
                 return matchSearch && matchDept && matchLoc;
             });
 
-            document.getElementById('jobs-count-label').innerText = `Showing ${filteredJobs.length} job${filteredJobs.length !== 1 ? 's' : ''}`;
 
             if (filteredJobs.length === 0) {
                 container.innerHTML = `
@@ -1584,20 +1934,25 @@
                 return;
             }
 
-            container.innerHTML = filteredJobs.map(job => {
+            container.innerHTML = filteredJobs.map((job, index) => {
                 const applied = myApplications.find(a => a.jobId === job.id);
                 const btnHtml = applied
-                    ? `<button disabled class="btn-secondary w-full cursor-not-allowed opacity-70"><i class="fas fa-check-circle text-emerald-500"></i> Applied</button>`
-                    : `<button onclick="applyToJob('${job.id}')" class="btn-primary w-full">${portalSettings?.customCtaText || 'Apply Now'}</button>`;
+                    ? `<button onclick="event.stopPropagation()" disabled class="btn-secondary w-full cursor-not-allowed opacity-70"><i class="fas fa-check-circle text-emerald-500"></i> Applied</button>`
+                    : `<button onclick="event.stopPropagation(); applyToJob('${job.id}')" class="btn-primary btn-focus w-full">${portalSettings?.customCtaText || 'Apply Now'}</button>`;
 
                 return `
-                    <div class="glass-card p-6 rounded-3xl flex flex-col justify-between group hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 border-b-4 border-b-transparent hover:border-b-blue-600">
+                    <div onclick="window.viewJobDetails('${job.id}')" class="cursor-pointer glass-card p-6 rounded-3xl flex flex-col justify-between group hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 border-b-4 border-b-transparent hover:border-b-blue-600 stagger-item" style="--delay: ${index}">
                         <div>
                             <div class="flex justify-between items-start mb-4">
                                 <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-lg">${job.department || 'General'}</span>
-                                <span class="text-xs font-bold text-slate-400"><i class="fas fa-location-dot mr-1"></i> ${job.location || 'Remote'}</span>
+                                <div class="flex items-center gap-3 relative z-10">
+                                    <span class="text-xs font-bold text-slate-400"><i class="fas fa-location-dot mr-1"></i> ${job.location || 'Remote'}</span>
+                                    <button onclick="event.stopPropagation(); window.shareJob('${job.id}')" class="text-slate-400 hover:text-blue-500 transition-colors p-1 flex items-center justify-center bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-full w-7 h-7" title="Share Job">
+                                        <i class="fas fa-share-nodes text-[10px]"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <h3 class="text-xl font-extrabold text-slate-800 dark:text-white mb-2 leading-tight">${job.title}</h3>
+                            <h3 class="text-xl font-extrabold text-slate-800 dark:text-white mb-2 leading-tight group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">${job.title}</h3>
                             <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 mb-6">${job.description || 'Join our growing team and make an impact. We are looking for talented individuals who are passionate about their work.'}</p>
                             
                             <div class="flex items-center gap-4 text-xs font-bold text-slate-600 dark:text-slate-400 mb-8">
@@ -1611,9 +1966,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2 mt-auto">
-                            <button onclick="viewJobDetails('${job.id}')" class="btn-secondary flex-1 border border-slate-200 dark:border-slate-700 hover:border-blue-300 transition-colors">View Details</button>
-                            <div class="flex-1">${btnHtml}</div>
+                        <div class="mt-auto relative z-10">
+                            ${btnHtml}
                         </div>
                     </div>
                 `;
@@ -1632,23 +1986,11 @@
                 return;
             }
 
-            container.innerHTML = myApplications.map(app => {
+            container.innerHTML = myApplications.map((app, index) => {
                 const job = openJobs.find(j => j.id === app.jobId) || { title: app.jobId, company: 'Unknown', department: 'General', location: 'Remote', budget: 0 };
 
                 const stages = ['Applied', 'Screening', 'Interview', 'Selected', 'Hired'];
                 const currentStageIdx = stages.indexOf(app.stage) !== -1 ? stages.indexOf(app.stage) : (app.stage === 'Rejected' ? -1 : 0);
-
-                const timelineHtml = app.stage === 'Rejected'
-                    ? `<div class="w-full bg-red-100 rounded-lg p-2 text-center text-xs font-bold text-red-600">Application Rejected</div>`
-                    : `<div class="flex items-center w-full mt-4">
-                        ${stages.map((stg, idx) => `
-                            <div class="flex-1 flex items-center relative">
-                                <div class="w-2.5 h-2.5 rounded-full z-10 ${idx <= currentStageIdx ? 'bg-blue-600 ring-4 ring-blue-100 dark:ring-blue-900/30' : 'bg-slate-200 dark:bg-slate-700'}"></div>
-                                ${idx < stages.length - 1 ? `<div class="h-0.5 w-full -ml-1 ${idx < currentStageIdx ? 'bg-blue-600' : 'bg-slate-200 dark:bg-slate-700'}"></div>` : ''}
-                                <span class="absolute -bottom-4 left-0 -translate-x-1/2 text-[9px] font-bold text-slate-400 whitespace-nowrap hidden md:block">${stg}</span>
-                            </div>
-                        `).join('')}
-                       </div>`;
 
                 const stageColors = {
                     'Applied': 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400',
@@ -1661,28 +2003,23 @@
                 const colorClass = stageColors[app.stage] || 'bg-slate-100 text-slate-600';
 
                 return `
-                    <div class="glass-card p-6 rounded-2xl flex flex-col gap-4 border-l-4 border-l-blue-500">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 bg-blue-50 dark:bg-slate-800 rounded-xl flex items-center justify-center text-xl text-blue-600">
-                                    <i class="fas fa-briefcase"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-black text-lg text-slate-800 dark:text-white leading-tight">${job.title}</h4>
-                                    <div class="flex flex-wrap items-center gap-3 mt-1 text-xs font-bold text-slate-500">
-                                        <span><i class="fas fa-building mr-1"></i>${job.department || 'General'}</span>
-                                        <span><i class="fas fa-location-dot mr-1"></i>${job.location || 'Remote'}</span>
-                                        <span><i class="fas fa-indian-rupee-sign mr-1 text-emerald-500"></i>${job.budget ? (job.budget / 100000).toFixed(1) + 'L LPA' : 'TBD'}</span>
-                                    </div>
-                                </div>
+                    <div onclick="viewAppDetails('${app.id}')" class="cursor-pointer glass-card p-5 rounded-2xl flex items-center justify-between group hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 border-l-4 border-l-blue-500 stagger-item" style="--delay: ${index}">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-blue-50 dark:bg-slate-800 rounded-xl flex items-center justify-center text-xl text-blue-600 group-hover:scale-110 transition-transform">
+                                <i class="fas fa-briefcase"></i>
                             </div>
-                            <div class="flex flex-col items-end gap-1">
-                                 <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${colorClass}">${app.stage || 'Applied'}</span>
-                                 <p class="text-[10px] font-bold text-slate-400 text-right mt-1"><i class="far fa-clock mr-1"></i>${new Date(app.appliedAt?.seconds * 1000 || Date.now()).toLocaleDateString()}</p>
+                            <div>
+                                <h4 class="font-black text-lg text-slate-800 dark:text-white leading-tight">${job.title}</h4>
+                                <div class="flex items-center gap-3 mt-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                    <span>${job.location || 'Remote'}</span>
+                                    <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+                                    <span>${new Date(app.appliedAt?.seconds * 1000 || Date.now()).toLocaleDateString()}</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="pt-2 pb-4">
-                            ${timelineHtml}
+                        <div class="flex flex-col items-end gap-2">
+                            <span class="px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${colorClass}">${app.stage || 'Applied'}</span>
+                            <i class="fas fa-chevron-right text-slate-300 group-hover:text-blue-500 transition-colors"></i>
                         </div>
                     </div>
                 `;
@@ -1738,6 +2075,11 @@
             btnApps.classList.add('text-slate-500');
             paneJobs.classList.remove('hidden');
             paneApps.classList.add('hidden');
+            
+            // update mobile nav
+            document.querySelectorAll('.mobile-nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-mobile-jobs').classList.add('active');
+            showView('portal-view');
         });
 
         btnApps.addEventListener('click', () => {
@@ -1747,6 +2089,11 @@
             btnJobs.classList.add('text-slate-500');
             paneApps.classList.remove('hidden');
             paneJobs.classList.add('hidden');
+            
+            // update mobile nav
+            document.querySelectorAll('.mobile-nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-mobile-apps').classList.add('active');
+            showView('portal-view');
         });
 
         // Theme Toggle Logic
