@@ -208,6 +208,72 @@
             animation: fadeIn 0.4s ease-out forwards;
         }
 
+        /* Stepper & Form Transitions */
+        .step-content {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            position: absolute;
+            width: 100%;
+            visibility: hidden;
+        }
+
+        .step-content.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            position: relative;
+            visibility: visible;
+        }
+
+        .step-content.exit-left {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+
+        .step-content.exit-right {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+
+        /* Enhanced Glassmorphism */
+        .glass-card-premium {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 40px -10px rgba(31, 38, 135, 0.1);
+        }
+
+        .dark .glass-card-premium {
+            background: rgba(30, 41, 59, 0.7);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+        }
+
+        .stepper-line {
+            position: relative;
+            height: 2px;
+            background: #e2e8f0;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .dark .stepper-line {
+            background: #1e293b;
+        }
+
+        .stepper-line-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
         .portal-locked-overlay {
             position: fixed;
             inset: 0;
@@ -596,230 +662,267 @@
 
         <!-- Profile View -->
         <div id="profile-view" class="hidden max-w-4xl mx-auto py-8 space-y-8 animate-push-in">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                <div>
-                    <h2 class="text-4xl font-black text-slate-900 dark:text-white">Setup Your Profile</h2>
-                    <p class="text-slate-500 dark:text-slate-400 mt-1">Tell us about yourself to match you with the
-                        right opportunities.</p>
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-slate-800/40 p-6 md:p-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+                <div class="relative z-10">
+                    <h2 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white leading-tight">Setup Your Profile</h2>
+                    <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm md:text-base">Tell us about yourself to match you with the right opportunities.</p>
                 </div>
-                <div
-                    class="flex items-center gap-4 bg-white dark:bg-slate-800/50 p-2 rounded-2xl border border-slate-200 dark:border-slate-700">
-                    <div class="stepper-dot active">1</div>
-                    <div class="w-12 h-1 rounded-full bg-slate-200 dark:bg-slate-700"></div>
-                    <div class="stepper-dot inactive">2</div>
+                
+                <div class="flex items-center gap-2 md:gap-4 relative z-10 w-full md:w-auto">
+                    <!-- Step 1 Dot -->
+                    <div class="flex flex-col items-center gap-2">
+                        <div id="step-dot-1" class="stepper-dot active ring-4 ring-blue-500/20">1</div>
+                        <span class="text-[9px] font-black uppercase tracking-tighter text-blue-600 dark:text-blue-400">Identity</span>
+                    </div>
+                    <!-- Line 1 -->
+                    <div class="stepper-line mb-4">
+                        <div id="step-line-1" class="stepper-line-fill"></div>
+                    </div>
+                    <!-- Step 2 Dot -->
+                    <div class="flex flex-col items-center gap-2">
+                        <div id="step-dot-2" class="stepper-dot inactive">2</div>
+                        <span class="text-[9px] font-black uppercase tracking-tighter text-slate-400">Career</span>
+                    </div>
+                    <!-- Line 2 -->
+                    <div class="stepper-line mb-4">
+                        <div id="step-line-2" class="stepper-line-fill"></div>
+                    </div>
+                    <!-- Step 3 Dot -->
+                    <div class="flex flex-col items-center gap-2">
+                        <div id="step-dot-3" class="stepper-dot inactive">3</div>
+                        <span class="text-[9px] font-black uppercase tracking-tighter text-slate-400">Docs</span>
+                    </div>
                 </div>
+                
+                <!-- Background Decorative Element -->
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl"></div>
             </div>
 
 
-            <form id="form-profile" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Personal Info -->
-                <div class="glass-card p-8 rounded-3xl space-y-6">
-                    <h3 class="text-lg font-bold flex items-center gap-2"><i class="fas fa-user text-blue-500"></i>
-                        Personal Details</h3>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-1 col-span-2">
-                            <label for="input-prof-name"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Full Name</label>
-                            <input type="text" id="input-prof-name" name="name" required class="theme-input"
-                                autocomplete="name">
+            <form id="form-profile" class="relative">
+                <!-- Step 1: Identity -->
+                <div id="step-content-1" class="step-content active space-y-8">
+                    <div class="glass-card-premium p-8 md:p-10 rounded-[2.5rem] space-y-8">
+                        <div class="flex items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-6">
+                            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600">
+                                <i class="fas fa-user-circle text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-black text-slate-900 dark:text-white">Personal Identity</h3>
+                                <p class="text-sm text-slate-500">How should we address you?</p>
+                            </div>
                         </div>
-                        <div class="space-y-1">
-                            <label for="input-prof-phone"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Phone
-                                Number</label>
-                            <input type="tel" id="input-prof-phone" name="phone" required class="theme-input"
-                                autocomplete="tel">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-2">
+                                <label for="input-prof-name" class="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    Full Name <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" id="input-prof-name" name="name" required class="theme-input !py-4 px-5 text-lg font-semibold" placeholder="e.g. John Doe" autocomplete="name">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label for="input-prof-phone" class="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    Phone Number <span class="text-red-500">*</span>
+                                </label>
+                                <input type="tel" id="input-prof-phone" name="phone" required class="theme-input !py-4 px-5 text-lg font-semibold" placeholder="+91 XXXXX XXXXX" autocomplete="tel">
+                            </div>
+
+                            <div class="space-y-2 md:col-span-2">
+                                <label for="prof-gender" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Gender</label>
+                                <div class="grid grid-cols-3 gap-4">
+                                    <label class="cursor-pointer group">
+                                        <input type="radio" name="gender" value="Male" class="hidden peer" checked>
+                                        <div class="py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 text-center font-bold text-slate-500 peer-checked:border-blue-500 peer-checked:text-blue-600 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 transition-all group-hover:bg-slate-50 dark:group-hover:bg-slate-800">
+                                            Male
+                                        </div>
+                                    </label>
+                                    <label class="cursor-pointer group">
+                                        <input type="radio" name="gender" value="Female" class="hidden peer">
+                                        <div class="py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 text-center font-bold text-slate-500 peer-checked:border-blue-500 peer-checked:text-blue-600 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 transition-all group-hover:bg-slate-50 dark:group-hover:bg-slate-800">
+                                            Female
+                                        </div>
+                                    </label>
+                                    <label class="cursor-pointer group">
+                                        <input type="radio" name="gender" value="Other" class="hidden peer">
+                                        <div class="py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 text-center font-bold text-slate-500 peer-checked:border-blue-500 peer-checked:text-blue-600 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 transition-all group-hover:bg-slate-50 dark:group-hover:bg-slate-800">
+                                            Other
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <div class="space-y-1 col-span-2">
-                            <label for="prof-gender"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Gender</label>
-                            <select id="prof-gender" name="gender" class="theme-input">
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        <div class="space-y-1 col-span-2">
-                            <label for="prof-address1"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Street
-                                Address</label>
-                            <input type="text" id="prof-address1" name="addressLine1"
-                                placeholder="House No., Building, Street" class="theme-input"
-                                autocomplete="address-line1">
-                        </div>
-                        <div class="space-y-1 col-span-2">
-                            <label for="prof-address2"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Address Line 2
-                                <span class="normal-case font-normal text-slate-300">(optional)</span></label>
-                            <input type="text" id="prof-address2" name="addressLine2"
-                                placeholder="Area, Colony, Landmark" class="theme-input" autocomplete="address-line2">
-                        </div>
-                        <div class="space-y-1">
-                            <label for="address-pincode"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Pincode</label>
-                            <input type="text" id="address-pincode" name="pincode" placeholder="6-digit pincode"
-                                maxlength="6" pattern="[0-9]{6}" class="theme-input" autocomplete="postal-code">
-                        </div>
-                        <div class="space-y-1">
-                            <label for="address-city"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">City</label>
-                            <input type="text" id="address-city" name="city" placeholder="e.g. Mumbai"
-                                class="theme-input" autocomplete="address-level2">
-                        </div>
-                        <div class="space-y-1 col-span-2">
-                            <label for="address-state"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">State</label>
-                            <select id="address-state" name="state" class="theme-input" autocomplete="address-level1">
-                                <option value="">Select State / UT</option>
-                                <option>Andhra Pradesh</option>
-                                <option>Arunachal Pradesh</option>
-                                <option>Assam</option>
-                                <option>Bihar</option>
-                                <option>Chhattisgarh</option>
-                                <option>Goa</option>
-                                <option>Gujarat</option>
-                                <option>Haryana</option>
-                                <option>Himachal Pradesh</option>
-                                <option>Jharkhand</option>
-                                <option>Karnataka</option>
-                                <option>Kerala</option>
-                                <option>Madhya Pradesh</option>
-                                <option>Maharashtra</option>
-                                <option>Manipur</option>
-                                <option>Meghalaya</option>
-                                <option>Mizoram</option>
-                                <option>Nagaland</option>
-                                <option>Odisha</option>
-                                <option>Punjab</option>
-                                <option>Rajasthan</option>
-                                <option>Sikkim</option>
-                                <option>Tamil Nadu</option>
-                                <option>Telangana</option>
-                                <option>Tripura</option>
-                                <option>Uttar Pradesh</option>
-                                <option>Uttarakhand</option>
-                                <option>West Bengal</option>
-                                <option>Andaman &amp; Nicobar Islands</option>
-                                <option>Chandigarh</option>
-                                <option>Dadra &amp; Nagar Haveli</option>
-                                <option>Daman &amp; Diu</option>
-                                <option>Delhi (NCT)</option>
-                                <option>Jammu &amp; Kashmir</option>
-                                <option>Ladakh</option>
-                                <option>Lakshadweep</option>
-                                <option>Puducherry</option>
-                            </select>
-                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="button" onclick="window.nextStep(1)" class="btn-primary px-10 py-4 text-lg rounded-2xl group shadow-2xl shadow-blue-500/20">
+                            Continue to Career
+                            <i class="fas fa-chevron-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Professional Info -->
-                <div class="glass-card p-8 rounded-3xl space-y-6">
-                    <h3 class="text-lg font-bold flex items-center gap-2"><i class="fas fa-briefcase text-blue-500"></i>
-                        Professional Summary</h3>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="space-y-1 col-span-2">
-                            <label for="prof-curr-comp"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Current
-                                Company</label>
-                            <input type="text" id="prof-curr-comp" name="currentCompany" class="theme-input"
-                                autocomplete="organization">
+                <!-- Step 2: Professional -->
+                <div id="step-content-2" class="step-content space-y-8">
+                    <div class="glass-card-premium p-8 md:p-10 rounded-[2.5rem] space-y-8">
+                        <div class="flex items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-6">
+                            <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center text-indigo-600">
+                                <i class="fas fa-briefcase text-2xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-black text-slate-900 dark:text-white">Career Summary</h3>
+                                <p class="text-sm text-slate-500">Your professional background and experience.</p>
+                            </div>
                         </div>
-                        <div class="space-y-1">
-                            <label for="prof-exp"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Experience
-                                (Yrs)</label>
-                            <input type="number" id="prof-exp" name="experience" step="0.5" class="theme-input">
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="space-y-2 col-span-2">
+                                <label for="prof-curr-comp" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Current Company</label>
+                                <input type="text" id="prof-curr-comp" name="currentCompany" class="theme-input !py-4 px-5 font-semibold" placeholder="e.g. Google / Freelance / Unemployed">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label for="prof-exp" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Total Experience (Yrs)</label>
+                                <input type="number" id="prof-exp" name="experience" step="0.5" class="theme-input !py-4 px-5 font-semibold" placeholder="0.0">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label for="prof-notice" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Notice Period (Days)</label>
+                                <input type="number" id="prof-notice" name="noticePeriod" class="theme-input !py-4 px-5 font-semibold" placeholder="e.g. 30">
+                            </div>
+
+                            <div class="space-y-2 col-span-2">
+                                <label for="prof-qual" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Highest Qualification</label>
+                                <input type="text" id="prof-qual" name="qualification" class="theme-input !py-4 px-5 font-semibold" placeholder="e.g. B.Tech in CS / MBA">
+                            </div>
+
+                            <div class="space-y-2 col-span-2">
+                                <label for="prof-skills" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Key Skills (Comma Separated)</label>
+                                <input type="text" id="prof-skills" name="skills" class="theme-input !py-4 px-5 font-semibold" placeholder="e.g. React, Node.js, Design">
+                            </div>
                         </div>
-                        <div class="space-y-1">
-                            <label for="prof-notice"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Notice Period
-                                (Days)</label>
-                            <input type="number" id="prof-notice" name="noticePeriod" class="theme-input">
-                        </div>
-                        <div class="space-y-1 col-span-2">
-                            <label for="prof-qual"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Highest
-                                Qualification</label>
-                            <input type="text" id="prof-qual" name="qualification" class="theme-input"
-                                autocomplete="off">
-                        </div>
-                        <div class="space-y-1 col-span-2">
-                            <label for="prof-skills"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Key Skills (Comma
-                                Separated)</label>
-                            <input type="text" id="prof-skills" name="skills" class="theme-input"
-                                placeholder="e.g. React, Node.js, Design" autocomplete="off">
-                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <button type="button" onclick="window.prevStep(2)" class="btn-secondary px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest">
+                            <i class="fas fa-chevron-left mr-2"></i> Back
+                        </button>
+                        <button type="button" onclick="window.nextStep(2)" class="btn-primary px-10 py-4 text-lg rounded-2xl group shadow-2xl shadow-blue-500/20">
+                            Continue to Documents
+                            <i class="fas fa-chevron-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Compensation & Resume -->
-                <div class="glass-card p-8 rounded-3xl space-y-6 md:col-span-2">
-                    <h3 class="text-lg font-bold flex items-center gap-2"><i
-                            class="fas fa-indian-rupee-sign text-blue-500"></i> Compensation & Documents</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="space-y-1">
-                            <label for="prof-curr-ctc"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Current Monthly
-                                CTC</label>
-                            <div class="relative">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">₹</span>
-                                <input type="number" id="prof-curr-ctc" name="currentCTC" class="theme-input pl-8"
-                                    autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="space-y-1">
-                            <label for="prof-exp-ctc"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Expected Monthly
-                                CTC</label>
-                            <div class="relative">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">₹</span>
-                                <input type="number" id="prof-exp-ctc" name="expectedCTC" class="theme-input pl-8"
-                                    autocomplete="off">
-                            </div>
-                        </div>
-                        <div class="space-y-1 md:col-span-3">
-                            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Upload Resume
-                                <span class="normal-case font-normal">(PDF / DOC / DOCX)</span></label>
-                            <input type="file" id="resume-file-input" accept=".pdf,.doc,.docx" class="hidden">
-                            <div onclick="document.getElementById('resume-file-input').click()"
-                                class="theme-input flex items-center gap-3 cursor-pointer hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all group">
-                                <div
-                                    class="w-9 h-9 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                                    <i
-                                        class="fas fa-cloud-upload-alt text-blue-500 group-hover:scale-110 transition-transform"></i>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p id="resume-upload-label" class="text-sm text-slate-400 truncate">Click to upload
-                                        your resume...</p>
-                                </div>
-                                <span
-                                    class="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Browse</span>
-                            </div>
-                            <div id="resume-progress-bar"
-                                class="hidden mt-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5">
-                                <div id="resume-progress-fill"
-                                    class="bg-blue-600 h-1.5 rounded-full transition-all duration-300" style="width:0%">
+                <!-- Step 3: Address & Documents -->
+                <div id="step-content-3" class="step-content space-y-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Left: Address & Compensation -->
+                        <div class="lg:col-span-2 space-y-8">
+                            <div class="glass-card-premium p-8 rounded-[2.5rem] space-y-8">
+                                <h3 class="text-xl font-black text-slate-900 dark:text-white flex items-center gap-3">
+                                    <i class="fas fa-map-location-dot text-blue-500"></i> Address & Salary
+                                </h3>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="space-y-2">
+                                        <label for="prof-curr-ctc" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Current Monthly CTC</label>
+                                        <div class="relative">
+                                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
+                                            <input type="number" id="prof-curr-ctc" name="currentCTC" class="theme-input pl-8 py-3.5 font-bold" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label for="prof-exp-ctc" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Expected Monthly CTC</label>
+                                        <div class="relative">
+                                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
+                                            <input type="number" id="prof-exp-ctc" name="expectedCTC" class="theme-input pl-8 py-3.5 font-bold" placeholder="0">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="space-y-2 md:col-span-2">
+                                        <label for="prof-address1" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Street Address</label>
+                                        <input type="text" id="prof-address1" name="addressLine1" class="theme-input py-3.5" placeholder="Building, Street Name">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label for="address-pincode" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Pincode</label>
+                                        <input type="text" id="address-pincode" name="pincode" maxlength="6" class="theme-input py-3.5 font-bold" placeholder="XXXXXX">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label for="address-city" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">City</label>
+                                        <input type="text" id="address-city" name="city" class="theme-input py-3.5" placeholder="e.g. Mumbai">
+                                    </div>
+                                    <div class="space-y-2 md:col-span-2">
+                                        <label for="address-state" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">State</label>
+                                        <select id="address-state" name="state" class="theme-input py-3.5">
+                                            <option value="">Select State</option>
+                                            <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option><option>Bihar</option><option>Chhattisgarh</option><option>Goa</option><option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option><option>Jharkhand</option><option>Karnataka</option><option>Kerala</option><option>Madhya Pradesh</option><option>Maharashtra</option><option>Manipur</option><option>Meghalaya</option><option>Mizoram</option><option>Nagaland</option><option>Odisha</option><option>Punjab</option><option>Rajasthan</option><option>Sikkim</option><option>Tamil Nadu</option><option>Telangana</option><option>Tripura</option><option>Uttar Pradesh</option><option>Uttarakhand</option><option>West Bengal</option><option>Delhi (NCT)</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
-                            <input type="hidden" name="resumeUrl" id="resume-url-hidden">
                         </div>
-                        <div class="space-y-1 md:col-span-3">
-                            <label for="prof-notes"
-                                class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Cover Letter /
-                                Personal Note</label>
-                            <textarea id="prof-notes" name="notes" rows="4" class="theme-input resize-none"
-                                placeholder="Tell us why you're a great fit..."></textarea>
+
+                        <!-- Right: Document Uploads -->
+                        <div class="space-y-8">
+                            <div class="glass-card-premium p-8 rounded-[2.5rem] space-y-6">
+                                <h3 class="text-xl font-black text-slate-900 dark:text-white flex items-center gap-3">
+                                    <i class="fas fa-file-shield text-blue-500"></i> Documents
+                                </h3>
+
+                                <!-- Resume Upload -->
+                                <div class="space-y-3">
+                                    <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Professional Resume <span class="text-red-500">*</span></label>
+                                    <input type="file" id="resume-file-input" accept=".pdf,.doc,.docx" class="hidden">
+                                    <div onclick="document.getElementById('resume-file-input').click()" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border-2 border-dashed border-slate-200 dark:border-slate-800 flex items-center gap-4 cursor-pointer hover:border-blue-500 group transition-all">
+                                        <div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center text-blue-500 shadow-sm group-hover:scale-110 transition-transform">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p id="resume-upload-label" class="text-xs font-bold text-slate-400 truncate">Tap to upload PDF</p>
+                                        </div>
+                                    </div>
+                                    <div id="resume-progress-bar" class="hidden h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                        <div id="resume-progress-fill" class="h-full bg-blue-600 transition-all duration-300"></div>
+                                    </div>
+                                    <input type="hidden" name="resumeUrl" id="resume-url-hidden">
+                                </div>
+
+                                <!-- Aadhaar Upload -->
+                                <div class="space-y-3">
+                                    <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Aadhaar Card <span class="text-red-500">*</span></label>
+                                    <input type="file" id="aadhaar-file-input" accept=".pdf,image/*" class="hidden">
+                                    <div onclick="document.getElementById('aadhaar-file-input').click()" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border-2 border-dashed border-slate-200 dark:border-slate-800 flex items-center gap-4 cursor-pointer hover:border-blue-500 group transition-all">
+                                        <div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center text-blue-500 shadow-sm group-hover:scale-110 transition-transform">
+                                            <i class="fas fa-id-card"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p id="aadhaar-upload-label" class="text-xs font-bold text-slate-400 truncate">Front & Back (Single File)</p>
+                                        </div>
+                                    </div>
+                                    <div id="aadhaar-progress-bar" class="hidden h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                        <div id="aadhaar-progress-fill" class="h-full bg-blue-600 transition-all duration-300"></div>
+                                    </div>
+                                    <input type="hidden" name="aadhaarUrl" id="aadhaar-url-hidden">
+                                </div>
+                            </div>
+                            
+                            <div class="glass-card-premium p-8 rounded-[2.5rem]">
+                                <label for="prof-notes" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Cover Note</label>
+                                <textarea id="prof-notes" name="notes" rows="3" class="theme-input !bg-transparent border-none p-0 mt-2 resize-none text-sm" placeholder="Tell us something about yourself..."></textarea>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="md:col-span-2 flex justify-center pb-12">
-                    <button type="submit" class="btn-primary px-12 group">
-                        Complete Profile Setup
-                        <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
-                    </button>
+                    <div class="flex items-center justify-between">
+                        <button type="button" onclick="window.prevStep(3)" class="btn-secondary px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest">
+                            <i class="fas fa-chevron-left mr-2"></i> Back
+                        </button>
+                        <button type="submit" class="btn-primary px-12 py-4 text-xl rounded-2xl group shadow-2xl shadow-blue-500/40 bg-gradient-to-r from-blue-600 to-indigo-600">
+                            Complete Profile Setup
+                            <i class="fas fa-check-circle ml-2 group-hover:scale-110 transition-transform"></i>
+                        </button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -1213,6 +1316,7 @@
         let portalSettings = null;
         let pendingJobId = null;
         let uploadedResumeUrl = '';
+        let uploadedAadhaarUrl = '';
         let activeFilters = { search: '', dept: '', location: '' };
 
         // Cloudinary config
@@ -1561,6 +1665,64 @@
             }
         });
 
+        // Aadhaar Upload (Cloudinary)
+        const aadhaarFileInput = document.getElementById('aadhaar-file-input');
+        const aadhaarUploadLabel = document.getElementById('aadhaar-upload-label');
+        const aadhaarProgressBar = document.getElementById('aadhaar-progress-bar');
+        const aadhaarProgressFill = document.getElementById('aadhaar-progress-fill');
+        const aadhaarUrlHidden = document.getElementById('aadhaar-url-hidden');
+
+        aadhaarFileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (file.size > 5 * 1024 * 1024) {
+                return alert("File is too large (max 5MB).");
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+            const activeCloudinaryPreset = (portalSettings && portalSettings.cloudinaryPreset) ? portalSettings.cloudinaryPreset : CLOUDINARY_PRESET;
+            const activeCloudinaryUrl = (portalSettings && portalSettings.cloudinaryUrl) ? portalSettings.cloudinaryUrl : CLOUDINARY_URL;
+
+            formData.append('upload_preset', activeCloudinaryPreset);
+
+            aadhaarProgressBar.classList.remove('hidden');
+            aadhaarUploadLabel.innerText = 'Uploading Aadhaar...';
+            aadhaarProgressFill.style.width = '30%';
+
+            try {
+                let progress = 30;
+                const progressInterval = setInterval(() => {
+                    progress = Math.min(progress + 10, 80);
+                    aadhaarProgressFill.style.width = `${progress}%`;
+                }, 200);
+
+                const response = await fetch(activeCloudinaryUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                clearInterval(progressInterval);
+
+                if (data.secure_url) {
+                    aadhaarProgressFill.style.width = '100%';
+                    uploadedAadhaarUrl = data.secure_url;
+                    aadhaarUrlHidden.value = data.secure_url;
+                    aadhaarUploadLabel.innerHTML = `<i class="fas fa-check text-emerald-500 mr-2"></i> Aadhaar: ${file.name}`;
+                    setTimeout(() => { aadhaarProgressBar.classList.add('hidden'); }, 1000);
+                } else {
+                    throw new Error(data.error?.message || "Upload failed");
+                }
+            } catch (err) {
+                console.error('Aadhaar Upload Error:', err);
+                alert("Failed to upload Aadhaar. Error: " + err.message);
+                aadhaarUploadLabel.innerText = "Upload failed. Try again.";
+                aadhaarProgressBar.classList.add('hidden');
+            }
+        });
+
         // Pincode Auto-fetch
         const pincodeInput = document.getElementById('address-pincode');
         const cityInput = document.getElementById('address-city');
@@ -1591,6 +1753,93 @@
             });
         }
 
+        // --- STEPPER LOGIC ---
+        let profileStep = 1;
+        const totalSteps = 3;
+
+        window.goToStep = (n) => {
+            if (n < 1 || n > totalSteps) return;
+
+            const currentEl = document.getElementById(`step-content-${profileStep}`);
+            const nextEl = document.getElementById(`step-content-${n}`);
+
+            // Transition animations
+            if (n > profileStep) {
+                currentEl.classList.add('exit-left');
+                nextEl.classList.remove('exit-right');
+            } else {
+                currentEl.classList.add('exit-right');
+                nextEl.classList.remove('exit-left');
+            }
+
+            currentEl.classList.remove('active');
+            
+            setTimeout(() => {
+                currentEl.classList.remove('exit-left', 'exit-right');
+                nextEl.classList.add('active');
+                profileStep = n;
+                updateStepperUI();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 50);
+        };
+
+        window.nextStep = (current) => {
+            if (validateStep(current)) {
+                window.goToStep(current + 1);
+            }
+        };
+
+        window.prevStep = (current) => {
+            window.goToStep(current - 1);
+        };
+
+        const validateStep = (n) => {
+            const stepEl = document.getElementById(`step-content-${n}`);
+            const requiredFields = stepEl.querySelectorAll('[required]');
+            let valid = true;
+
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    valid = false;
+                    field.classList.add('border-red-500', 'bg-red-50', 'dark:bg-red-900/10');
+                    setTimeout(() => field.classList.remove('border-red-500', 'bg-red-50', 'dark:bg-red-900/10'), 3000);
+                }
+            });
+
+            if (!valid) {
+                alert("Please fill in all required fields before continuing.");
+                return false;
+            }
+
+            // Special validation for Step 1: Gender is now radio, so name=gender is required
+            if (n === 1) {
+                const gender = document.querySelector('input[name="gender"]:checked');
+                if (!gender) {
+                    alert("Please select your gender.");
+                    return false;
+                }
+            }
+
+            return true;
+        };
+
+        const updateStepperUI = () => {
+            for (let i = 1; i <= totalSteps; i++) {
+                const dot = document.getElementById(`step-dot-${i}`);
+                const line = document.getElementById(`step-line-${i}`);
+                
+                if (i <= profileStep) {
+                    dot.classList.remove('inactive');
+                    dot.classList.add('active', 'ring-4', 'ring-blue-500/20');
+                    if (line) line.style.width = '100%';
+                } else {
+                    dot.classList.remove('active', 'ring-4', 'ring-blue-500/20');
+                    dot.classList.add('inactive');
+                    if (line) line.style.width = '0%';
+                }
+            }
+        };
+
         // Submit Profile
         document.getElementById('form-profile').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1604,6 +1853,14 @@
             profileData.profileUid = currentUser.uid;
             profileData.email = currentUser.email;
             profileData.updatedAt = serverTimestamp();
+
+            // Validation for mandatory documents
+            if (!profileData.resumeUrl) {
+                return alert("Please upload your resume before completing profile setup.");
+            }
+            if (!profileData.aadhaarUrl) {
+                return alert("Please upload your Aadhaar Card before completing profile setup.");
+            }
 
             showProcessing(true);
             try {
@@ -1720,7 +1977,28 @@
             if (currentProfile.resumeUrl) {
                 resumeUploadLabel.innerHTML = `<i class="fas fa-check text-emerald-500 mr-2"></i> Resume Uploaded`;
                 resumeUrlHidden.value = currentProfile.resumeUrl;
+                uploadedResumeUrl = currentProfile.resumeUrl;
             }
+            if (currentProfile.aadhaarUrl) {
+                aadhaarUploadLabel.innerHTML = `<i class="fas fa-check text-emerald-500 mr-2"></i> Aadhaar Uploaded`;
+                aadhaarUrlHidden.value = currentProfile.aadhaarUrl;
+                uploadedAadhaarUrl = currentProfile.aadhaarUrl;
+            }
+            // Handle gender radio
+            if (currentProfile.gender) {
+                const radio = document.querySelector(`input[name="gender"][value="${currentProfile.gender}"]`);
+                if (radio) radio.checked = true;
+            }
+
+            // Reset stepper
+            profileStep = 1;
+            for (let i = 1; i <= totalSteps; i++) {
+                const content = document.getElementById(`step-content-${i}`);
+                if (i === 1) content.classList.add('active');
+                else content.classList.remove('active', 'exit-left', 'exit-right');
+            }
+            updateStepperUI();
+
             showView('profile-view');
         };
 
@@ -1780,29 +2058,67 @@
                 </div>
             `;
 
-            // Resume Preview
+            // Documents Display
             const previewContainer = document.getElementById('prof-resume-preview');
             const actionsContainer = document.getElementById('prof-resume-actions');
 
-            if (p.resumeUrl) {
-                const isPdf = p.resumeUrl.toLowerCase().endsWith('.pdf');
+            let docsHtml = '';
+            
+            // Resume Section
+            docsHtml += `
+                <div class="glass-card rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center justify-between mb-4">
+                        <h5 class="text-xs font-black uppercase tracking-widest text-slate-400">Professional Resume</h5>
+                        <div class="flex gap-2">
+                            ${p.resumeUrl ? `
+                                <button onclick="window.open('${p.resumeUrl}', '_blank')" class="text-blue-500 hover:text-blue-600 text-[10px] font-bold bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-lg transition-colors"><i class="fas fa-external-link-alt mr-1"></i>Open</button>
+                                <button onclick="deleteDocField('resumeUrl')" class="text-red-500 hover:text-red-600 text-[10px] font-bold bg-red-50 dark:bg-red-900/30 px-3 py-1.5 rounded-lg transition-colors"><i class="fas fa-trash-alt mr-1"></i>Delete</button>
+                            ` : `<button onclick="openEditProfile()" class="text-blue-500 text-[10px] font-bold uppercase tracking-widest">Upload</button>`}
+                        </div>
+                    </div>
+                    <div class="h-40 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
+                        ${p.resumeUrl ? (p.resumeUrl.toLowerCase().endsWith('.pdf') ? `<i class="fas fa-file-pdf text-4xl text-red-500"></i>` : `<i class="fas fa-file-word text-4xl text-blue-500"></i>`) : `<span class="text-slate-400 text-xs">No resume</span>`}
+                    </div>
+                </div>
+            `;
 
-                // Using Google Docs Viewer for docs, native object for PDFs
-                const viewerUrl = isPdf
-                    ? p.resumeUrl
-                    : `https://docs.google.com/viewer?url=${encodeURIComponent(p.resumeUrl)}&embedded=true`;
+            // Aadhaar Section
+            docsHtml += `
+                <div class="glass-card rounded-2xl p-4 border border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center justify-between mb-4">
+                        <h5 class="text-xs font-black uppercase tracking-widest text-slate-400">Aadhaar Card</h5>
+                        <div class="flex gap-2">
+                            ${p.aadhaarUrl ? `
+                                <button onclick="window.open('${p.aadhaarUrl}', '_blank')" class="text-blue-500 hover:text-blue-600 text-[10px] font-bold bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-lg transition-colors"><i class="fas fa-external-link-alt mr-1"></i>Open</button>
+                                <button onclick="deleteDocField('aadhaarUrl')" class="text-red-500 hover:text-red-600 text-[10px] font-bold bg-red-50 dark:bg-red-900/30 px-3 py-1.5 rounded-lg transition-colors"><i class="fas fa-trash-alt mr-1"></i>Delete</button>
+                            ` : `<button onclick="openEditProfile()" class="text-blue-500 text-[10px] font-bold uppercase tracking-widest">Upload</button>`}
+                        </div>
+                    </div>
+                    <div class="h-40 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center overflow-hidden">
+                        ${p.aadhaarUrl ? `<i class="fas fa-id-card text-4xl text-blue-500"></i>` : `<span class="text-slate-400 text-xs">No Aadhaar Card</span>`}
+                    </div>
+                </div>
+            `;
 
-                previewContainer.innerHTML = `<iframe src="${viewerUrl}" class="w-full h-full border-0" allowfullscreen></iframe>`;
+            previewContainer.classList.remove('h-full');
+            previewContainer.style.height = 'auto';
+            previewContainer.innerHTML = `<div class="grid grid-cols-1 md:grid-cols-2 gap-4">${docsHtml}</div>`;
+            actionsContainer.innerHTML = ''; // Moved into doc cards
+        };
 
-                actionsContainer.innerHTML = `
-                    <button onclick="window.open('${p.resumeUrl}', '_blank')" class="text-blue-500 hover:text-blue-600 text-sm font-bold bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-lg transition-colors"><i class="fas fa-external-link-alt mr-1"></i>Open</button>
-                    <button onclick="deleteResume()" class="text-red-500 hover:text-red-600 text-sm font-bold bg-red-50 dark:bg-red-900/30 px-3 py-1.5 rounded-lg transition-colors"><i class="fas fa-trash-alt mr-1"></i>Delete</button>
-                `;
-            } else {
-                previewContainer.innerHTML = `<p class="text-center text-slate-400 text-sm pt-20">No resume uploaded yet.</p>`;
-                actionsContainer.innerHTML = `
-                    <button onclick="openEditProfile()" class="text-blue-500 hover:text-blue-600 text-sm font-bold bg-blue-50 dark:bg-blue-900/30 px-3 py-1.5 rounded-lg transition-colors"><i class="fas fa-upload mr-1"></i>Upload</button>
-                `;
+        window.deleteDocField = async (field) => {
+            if (!confirm(`Are you sure you want to remove this document?`)) return;
+            showProcessing(true);
+            try {
+                const updates = {};
+                updates[field] = '';
+                await updateDoc(doc(db, "candidateProfiles", currentUser.uid), updates);
+                currentProfile[field] = '';
+                renderCandidateProfile();
+            } catch (e) {
+                alert("Failed to delete: " + e.message);
+            } finally {
+                showProcessing(false);
             }
         };
 
@@ -1999,8 +2315,12 @@
             const applied = myApplications.find(a => a.jobId === job.id);
 
             let applyBtnHtml = '';
+            const incompleteProfile = !currentProfile || !currentProfile.resumeUrl || !currentProfile.aadhaarUrl;
+
             if (applied) {
                 applyBtnHtml = `<button disabled class="btn-secondary px-6 cursor-not-allowed opacity-70"><i class="fas fa-check-circle text-emerald-500 mr-2"></i>Applied</button>`;
+            } else if (incompleteProfile) {
+                applyBtnHtml = `<button onclick="window.openEditProfile()" class="btn-primary bg-amber-500 hover:bg-amber-600 px-6 whitespace-nowrap"><i class="fas fa-exclamation-circle mr-2"></i>Complete Profile to Apply</button>`;
             } else {
                 applyBtnHtml = `<button onclick="applyToJob('${job.id}'); showView('portal-view');" class="btn-primary px-6">${portalSettings?.customCtaText || 'Apply Now'}</button>`;
             }
@@ -2045,9 +2365,16 @@
 
             container.innerHTML = filteredJobs.map((job, index) => {
                 const applied = myApplications.find(a => a.jobId === job.id);
-                const btnHtml = applied
-                    ? `<button onclick="event.stopPropagation()" disabled class="btn-secondary w-full cursor-not-allowed opacity-70"><i class="fas fa-check-circle text-emerald-500"></i> Applied</button>`
-                    : `<button onclick="event.stopPropagation(); applyToJob('${job.id}')" class="btn-primary btn-focus w-full">${portalSettings?.customCtaText || 'Apply Now'}</button>`;
+                const incompleteProfile = !currentProfile || !currentProfile.resumeUrl || !currentProfile.aadhaarUrl;
+
+                let btnHtml = '';
+                if (applied) {
+                    btnHtml = `<button onclick="event.stopPropagation()" disabled class="btn-secondary w-full cursor-not-allowed opacity-70"><i class="fas fa-check-circle text-emerald-500"></i> Applied</button>`;
+                } else if (incompleteProfile) {
+                    btnHtml = `<button onclick="event.stopPropagation(); window.openEditProfile()" class="btn-primary bg-amber-500 hover:bg-amber-600 w-full text-xs"><i class="fas fa-exclamation-circle mr-1"></i> Complete Profile</button>`;
+                } else {
+                    btnHtml = `<button onclick="event.stopPropagation(); applyToJob('${job.id}')" class="btn-primary btn-focus w-full">${portalSettings?.customCtaText || 'Apply Now'}</button>`;
+                }
 
                 return `
                     <div onclick="window.viewJobDetails('${job.id}')" class="cursor-pointer glass-card p-6 rounded-3xl flex flex-col justify-between group hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-300 border-b-4 border-b-transparent hover:border-b-blue-600 stagger-item" style="--delay: ${index}">
@@ -2141,10 +2468,14 @@
                 toggleAuthModal(true, 'register');
                 return;
             }
-            if (!currentProfile) {
+            if (!currentProfile || !currentProfile.resumeUrl || !currentProfile.aadhaarUrl) {
                 pendingJobId = jobId;
-                alert("Please complete your profile first.");
-                showView('profile-view');
+                alert("Please complete your profile by uploading your Resume and Aadhaar Card before applying.");
+                if (currentProfile) {
+                    window.openEditProfile();
+                } else {
+                    showView('profile-view');
+                }
                 return;
             }
 
