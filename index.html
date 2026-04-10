@@ -359,14 +359,21 @@
 
             #jobs-pane,
             #apps-pane,
-            #exposure-section {
+            #exposure-section,
+            #job-details-view {
                 margin-left: -1.5rem;
                 margin-right: -1.5rem;
+            }
+            
+            #job-details-view > .flex.items-center {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
             }
 
             #jobs-pane .glass-card,
             #apps-pane .glass-card,
-            #exposure-section .glass-card {
+            #exposure-section .glass-card,
+            #job-details-view .glass-card {
                 border-radius: 0;
                 border-left: none;
                 border-right: none;
@@ -377,12 +384,14 @@
 
             .dark #jobs-pane .glass-card,
             .dark #apps-pane .glass-card,
-            .dark #exposure-section .glass-card {
+            .dark #exposure-section .glass-card,
+            .dark #job-details-view .glass-card {
                 border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             }
 
             .mobile-bottom-nav {
                 display: flex;
+                height: 64px;
                 position: fixed;
                 bottom: 0;
                 left: 0;
@@ -467,23 +476,24 @@
             /* Action Container Bottom Sticky Mobile */
             #jd-action-container {
                 position: fixed;
-                bottom: 60px;
+                bottom: calc(64px + env(safe-area-inset-bottom, 0));
                 left: 0;
                 right: 0;
-                padding: 1rem;
-                background: rgba(255, 255, 255, 0.85);
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
+                padding: 1rem 1.25rem;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
                 border-top: 1px solid rgba(0, 0, 0, 0.05);
-                z-index: 50;
-                box-shadow: 0 -10px 20px -5px rgba(0, 0, 0, 0.05);
+                z-index: 80;
+                box-shadow: 0 -10px 20px -5px rgba(0, 0, 0, 0.08);
                 border-top-left-radius: 1.5rem;
                 border-top-right-radius: 1.5rem;
-                justify-content: stretch;
+                justify-content: space-between;
+                gap: 1rem;
             }
 
             .dark #jd-action-container {
-                background: rgba(15, 23, 42, 0.85);
+                background: rgba(15, 23, 42, 0.95);
                 border-top-color: rgba(255, 255, 255, 0.05);
             }
 
@@ -661,11 +671,11 @@
         </div>
 
         <!-- Profile View -->
-        <div id="profile-view" class="hidden max-w-4xl mx-auto py-8 space-y-8 animate-push-in">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-slate-800/40 p-6 md:p-8 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-sm relative overflow-hidden">
+        <div id="profile-view" class="hidden max-w-4xl mx-auto py-6 space-y-6 animate-push-in">
+            <div class="sticky top-[56px] md:top-[72px] z-40 flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/80 dark:bg-slate-800/60 backdrop-blur-md p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
                 <div class="relative z-10">
-                    <h2 class="text-3xl md:text-4xl font-black text-slate-900 dark:text-white leading-tight">Setup Your Profile</h2>
-                    <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm md:text-base">Tell us about yourself to match you with the right opportunities.</p>
+                    <h2 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white leading-tight">Setup Your Profile</h2>
+                    <p class="text-slate-500 dark:text-slate-400 mt-1.5 text-sm">Tell us about yourself to match you with the right opportunities.</p>
                 </div>
                 
                 <div class="flex items-center gap-2 md:gap-4 relative z-10 w-full md:w-auto">
@@ -699,53 +709,60 @@
             </div>
 
 
-            <form id="form-profile" class="relative">
+            <form id="form-profile" class="relative overflow-hidden pb-4">
                 <!-- Step 1: Identity -->
-                <div id="step-content-1" class="step-content active space-y-8">
-                    <div class="glass-card-premium p-8 md:p-10 rounded-[2.5rem] space-y-8">
-                        <div class="flex items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-6">
-                            <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600">
-                                <i class="fas fa-user-circle text-2xl"></i>
+                <div id="step-content-1" class="step-content active space-y-6">
+                    <div class="glass-card-premium p-6 md:p-8 rounded-3xl space-y-6">
+                        <div class="flex items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
+                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600">
+                                <i class="fas fa-user-circle text-xl"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-black text-slate-900 dark:text-white">Personal Identity</h3>
-                                <p class="text-sm text-slate-500">How should we address you?</p>
+                                <h3 class="text-lg font-black text-slate-900 dark:text-white">Personal Identity</h3>
+                                <p class="text-xs text-slate-500">How should we address you?</p>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-2">
                                 <label for="input-prof-name" class="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                     Full Name <span class="text-red-500">*</span>
                                 </label>
-                                <input type="text" id="input-prof-name" name="name" required class="theme-input !py-4 px-5 text-lg font-semibold" placeholder="e.g. John Doe" autocomplete="name">
+                                <input type="text" id="input-prof-name" name="name" required class="theme-input !py-3 px-4 text-sm font-medium" placeholder="e.g. John Doe" autocomplete="name">
                             </div>
 
                             <div class="space-y-2">
                                 <label for="input-prof-phone" class="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                     Phone Number <span class="text-red-500">*</span>
                                 </label>
-                                <input type="tel" id="input-prof-phone" name="phone" required class="theme-input !py-4 px-5 text-lg font-semibold" placeholder="+91 XXXXX XXXXX" autocomplete="tel">
+                                <input type="tel" id="input-prof-phone" name="phone" required class="theme-input !py-3 px-4 text-sm font-medium" placeholder="+91 XXXXX XXXXX" autocomplete="tel">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label for="input-prof-dob" class="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    Date of Birth <span class="text-red-500">*</span>
+                                </label>
+                                <input type="date" id="input-prof-dob" name="dob" required class="theme-input !py-3 px-4 text-sm font-medium" autocomplete="bday">
                             </div>
 
                             <div class="space-y-2 md:col-span-2">
                                 <label for="prof-gender" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Gender</label>
-                                <div class="grid grid-cols-3 gap-4">
+                                <div class="grid grid-cols-3 gap-3 md:gap-4">
                                     <label class="cursor-pointer group">
                                         <input type="radio" name="gender" value="Male" class="hidden peer" checked>
-                                        <div class="py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 text-center font-bold text-slate-500 peer-checked:border-blue-500 peer-checked:text-blue-600 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 transition-all group-hover:bg-slate-50 dark:group-hover:bg-slate-800">
+                                        <div class="py-3 rounded-xl text-sm border-2 border-slate-100 dark:border-slate-800 text-center font-bold text-slate-500 peer-checked:border-blue-500 peer-checked:text-blue-600 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 transition-all group-hover:bg-slate-50 dark:group-hover:bg-slate-800">
                                             Male
                                         </div>
                                     </label>
                                     <label class="cursor-pointer group">
                                         <input type="radio" name="gender" value="Female" class="hidden peer">
-                                        <div class="py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 text-center font-bold text-slate-500 peer-checked:border-blue-500 peer-checked:text-blue-600 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 transition-all group-hover:bg-slate-50 dark:group-hover:bg-slate-800">
+                                        <div class="py-3 rounded-xl text-sm border-2 border-slate-100 dark:border-slate-800 text-center font-bold text-slate-500 peer-checked:border-blue-500 peer-checked:text-blue-600 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 transition-all group-hover:bg-slate-50 dark:group-hover:bg-slate-800">
                                             Female
                                         </div>
                                     </label>
                                     <label class="cursor-pointer group">
                                         <input type="radio" name="gender" value="Other" class="hidden peer">
-                                        <div class="py-4 rounded-2xl border-2 border-slate-100 dark:border-slate-800 text-center font-bold text-slate-500 peer-checked:border-blue-500 peer-checked:text-blue-600 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 transition-all group-hover:bg-slate-50 dark:group-hover:bg-slate-800">
+                                        <div class="py-3 rounded-xl text-sm border-2 border-slate-100 dark:border-slate-800 text-center font-bold text-slate-500 peer-checked:border-blue-500 peer-checked:text-blue-600 peer-checked:bg-blue-50 dark:peer-checked:bg-blue-900/20 transition-all group-hover:bg-slate-50 dark:group-hover:bg-slate-800">
                                             Other
                                         </div>
                                     </label>
@@ -755,7 +772,7 @@
                     </div>
 
                     <div class="flex justify-end">
-                        <button type="button" onclick="window.nextStep(1)" class="btn-primary px-10 py-4 text-lg rounded-2xl group shadow-2xl shadow-blue-500/20">
+                        <button type="button" onclick="window.nextStep(1)" class="btn-primary px-8 py-3.5 text-base rounded-xl group shadow-lg shadow-blue-500/20">
                             Continue to Career
                             <i class="fas fa-chevron-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                         </button>
@@ -763,98 +780,107 @@
                 </div>
 
                 <!-- Step 2: Professional -->
-                <div id="step-content-2" class="step-content space-y-8">
-                    <div class="glass-card-premium p-8 md:p-10 rounded-[2.5rem] space-y-8">
-                        <div class="flex items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-6">
-                            <div class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center text-indigo-600">
-                                <i class="fas fa-briefcase text-2xl"></i>
+                <div id="step-content-2" class="step-content space-y-6">
+                    <div class="glass-card-premium p-6 md:p-8 rounded-3xl space-y-6">
+                        <div class="flex items-center gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
+                            <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center text-indigo-600">
+                                <i class="fas fa-briefcase text-xl"></i>
                             </div>
                             <div>
-                                <h3 class="text-xl font-black text-slate-900 dark:text-white">Career Summary</h3>
-                                <p class="text-sm text-slate-500">Your professional background and experience.</p>
+                                <h3 class="text-lg font-black text-slate-900 dark:text-white">Career Summary</h3>
+                                <p class="text-xs text-slate-500">Your professional background and experience.</p>
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="space-y-2 col-span-2">
                                 <label for="prof-curr-comp" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Current Company</label>
-                                <input type="text" id="prof-curr-comp" name="currentCompany" class="theme-input !py-4 px-5 font-semibold" placeholder="e.g. Google / Freelance / Unemployed">
+                                <input type="text" id="prof-curr-comp" name="currentCompany" class="theme-input !py-3 px-4 text-sm font-medium" placeholder="e.g. Google / Freelance / Unemployed">
                             </div>
 
                             <div class="space-y-2">
                                 <label for="prof-exp" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Total Experience (Yrs)</label>
-                                <input type="number" id="prof-exp" name="experience" step="0.5" class="theme-input !py-4 px-5 font-semibold" placeholder="0.0">
+                                <input type="number" id="prof-exp" name="experience" step="0.5" class="theme-input !py-3 px-4 text-sm font-medium" placeholder="0.0">
                             </div>
 
                             <div class="space-y-2">
                                 <label for="prof-notice" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Notice Period (Days)</label>
-                                <input type="number" id="prof-notice" name="noticePeriod" class="theme-input !py-4 px-5 font-semibold" placeholder="e.g. 30">
+                                <input type="number" id="prof-notice" name="noticePeriod" class="theme-input !py-3 px-4 text-sm font-medium" placeholder="e.g. 30">
                             </div>
 
                             <div class="space-y-2 col-span-2">
                                 <label for="prof-qual" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Highest Qualification</label>
-                                <input type="text" id="prof-qual" name="qualification" class="theme-input !py-4 px-5 font-semibold" placeholder="e.g. B.Tech in CS / MBA">
+                                <input type="text" id="prof-qual" name="qualification" class="theme-input !py-3 px-4 text-sm font-medium" placeholder="e.g. B.Tech in CS / MBA">
                             </div>
 
-                            <div class="space-y-2 col-span-2">
-                                <label for="prof-skills" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Key Skills (Comma Separated)</label>
-                                <input type="text" id="prof-skills" name="skills" class="theme-input !py-4 px-5 font-semibold" placeholder="e.g. React, Node.js, Design">
+                            <div class="space-y-2 col-span-2 relative">
+                                <label for="prof-skills-input" class="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    Key Skills <i class="fas fa-wand-magic-sparkles text-blue-500" title="AI Skill Selector"></i>
+                                </label>
+                                <div id="skills-container" class="theme-input min-h-[50px] !py-2 px-3 flex flex-wrap gap-2 items-center cursor-text transition-all focus-within:border-blue-500 focus-within:shadow-[0_0_0_4px_rgba(59,130,246,0.1)]" onclick="document.getElementById('prof-skills-input').focus()">
+                                    <!-- Pills injected via JS -->
+                                    <input type="text" id="prof-skills-input" class="bg-transparent border-none outline-none flex-1 min-w-[120px] text-sm font-medium dark:text-white placeholder-slate-400" placeholder="Type a skill..." autocomplete="off">
+                                </div>
+                                <input type="hidden" id="prof-skills-hidden" name="skills">
+                                
+                                <!-- Suggestions Dropdown -->
+                                <div id="skills-suggestions" class="absolute left-0 right-0 top-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl rounded-xl z-50 max-h-48 overflow-y-auto hidden custom-scrollbar opacity-0 translate-y-2 transition-all duration-200"></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="flex items-center justify-between">
-                        <button type="button" onclick="window.prevStep(2)" class="btn-secondary px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest">
+                        <button type="button" onclick="window.prevStep(2)" class="btn-secondary px-6 py-3.5 rounded-xl font-bold text-sm uppercase tracking-widest">
                             <i class="fas fa-chevron-left mr-2"></i> Back
                         </button>
-                        <button type="button" onclick="window.nextStep(2)" class="btn-primary px-10 py-4 text-lg rounded-2xl group shadow-2xl shadow-blue-500/20">
-                            Continue to Documents
+                        <button type="button" onclick="window.nextStep(2)" class="btn-primary px-8 py-3.5 text-base rounded-xl group shadow-lg shadow-blue-500/20">
+                            Continue to Docs
                             <i class="fas fa-chevron-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- Step 3: Address & Documents -->
-                <div id="step-content-3" class="step-content space-y-8">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div id="step-content-3" class="step-content space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <!-- Left: Address & Compensation -->
-                        <div class="lg:col-span-2 space-y-8">
-                            <div class="glass-card-premium p-8 rounded-[2.5rem] space-y-8">
-                                <h3 class="text-xl font-black text-slate-900 dark:text-white flex items-center gap-3">
-                                    <i class="fas fa-map-location-dot text-blue-500"></i> Address & Salary
+                        <div class="lg:col-span-2 space-y-6">
+                            <div class="glass-card-premium p-6 md:p-8 rounded-3xl space-y-6">
+                                <h3 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                                    <i class="fas fa-map-location-dot text-blue-500 text-base"></i> Address & Salary
                                 </h3>
                                 
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                     <div class="space-y-2">
                                         <label for="prof-curr-ctc" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Current Monthly CTC</label>
                                         <div class="relative">
-                                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
-                                            <input type="number" id="prof-curr-ctc" name="currentCTC" class="theme-input pl-8 py-3.5 font-bold" placeholder="0">
+                                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">₹</span>
+                                            <input type="number" id="prof-curr-ctc" name="currentCTC" class="theme-input pl-7 py-3 text-sm font-medium" placeholder="0">
                                         </div>
                                     </div>
                                     <div class="space-y-2">
                                         <label for="prof-exp-ctc" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Expected Monthly CTC</label>
                                         <div class="relative">
-                                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
-                                            <input type="number" id="prof-exp-ctc" name="expectedCTC" class="theme-input pl-8 py-3.5 font-bold" placeholder="0">
+                                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">₹</span>
+                                            <input type="number" id="prof-exp-ctc" name="expectedCTC" class="theme-input pl-7 py-3 text-sm font-medium" placeholder="0">
                                         </div>
                                     </div>
                                     
                                     <div class="space-y-2 md:col-span-2">
                                         <label for="prof-address1" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Street Address</label>
-                                        <input type="text" id="prof-address1" name="addressLine1" class="theme-input py-3.5" placeholder="Building, Street Name">
+                                        <input type="text" id="prof-address1" name="addressLine1" class="theme-input py-3 text-sm font-medium" placeholder="Building, Street Name">
                                     </div>
                                     <div class="space-y-2">
                                         <label for="address-pincode" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Pincode</label>
-                                        <input type="text" id="address-pincode" name="pincode" maxlength="6" class="theme-input py-3.5 font-bold" placeholder="XXXXXX">
+                                        <input type="text" id="address-pincode" name="pincode" maxlength="6" class="theme-input py-3 text-sm font-medium" placeholder="XXXXXX">
                                     </div>
                                     <div class="space-y-2">
                                         <label for="address-city" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">City</label>
-                                        <input type="text" id="address-city" name="city" class="theme-input py-3.5" placeholder="e.g. Mumbai">
+                                        <input type="text" id="address-city" name="city" class="theme-input py-3 text-sm font-medium" placeholder="e.g. Mumbai">
                                     </div>
                                     <div class="space-y-2 md:col-span-2">
                                         <label for="address-state" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">State</label>
-                                        <select id="address-state" name="state" class="theme-input py-3.5">
+                                        <select id="address-state" name="state" class="theme-input py-3 text-sm font-medium">
                                             <option value="">Select State</option>
                                             <option>Andhra Pradesh</option><option>Arunachal Pradesh</option><option>Assam</option><option>Bihar</option><option>Chhattisgarh</option><option>Goa</option><option>Gujarat</option><option>Haryana</option><option>Himachal Pradesh</option><option>Jharkhand</option><option>Karnataka</option><option>Kerala</option><option>Madhya Pradesh</option><option>Maharashtra</option><option>Manipur</option><option>Meghalaya</option><option>Mizoram</option><option>Nagaland</option><option>Odisha</option><option>Punjab</option><option>Rajasthan</option><option>Sikkim</option><option>Tamil Nadu</option><option>Telangana</option><option>Tripura</option><option>Uttar Pradesh</option><option>Uttarakhand</option><option>West Bengal</option><option>Delhi (NCT)</option>
                                         </select>
@@ -864,19 +890,19 @@
                         </div>
 
                         <!-- Right: Document Uploads -->
-                        <div class="space-y-8">
-                            <div class="glass-card-premium p-8 rounded-[2.5rem] space-y-6">
-                                <h3 class="text-xl font-black text-slate-900 dark:text-white flex items-center gap-3">
-                                    <i class="fas fa-file-shield text-blue-500"></i> Documents
+                        <div class="space-y-6">
+                            <div class="glass-card-premium p-6 md:p-8 rounded-3xl space-y-5">
+                                <h3 class="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                                    <i class="fas fa-file-shield text-blue-500 text-base"></i> Documents
                                 </h3>
 
                                 <!-- Resume Upload -->
-                                <div class="space-y-3">
+                                <div class="space-y-2">
                                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Professional Resume <span class="text-red-500">*</span></label>
                                     <input type="file" id="resume-file-input" accept=".pdf,.doc,.docx" class="hidden">
-                                    <div onclick="document.getElementById('resume-file-input').click()" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border-2 border-dashed border-slate-200 dark:border-slate-800 flex items-center gap-4 cursor-pointer hover:border-blue-500 group transition-all">
-                                        <div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center text-blue-500 shadow-sm group-hover:scale-110 transition-transform">
-                                            <i class="fas fa-file-pdf"></i>
+                                    <div onclick="document.getElementById('resume-file-input').click()" class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/40 border-2 border-dashed border-slate-200 dark:border-slate-800 flex items-center gap-3 cursor-pointer hover:border-blue-500 group transition-all">
+                                        <div class="w-8 h-8 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center text-blue-500 shadow-sm group-hover:scale-110 transition-transform">
+                                            <i class="fas fa-file-pdf text-sm"></i>
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <p id="resume-upload-label" class="text-xs font-bold text-slate-400 truncate">Tap to upload PDF</p>
@@ -889,25 +915,25 @@
                                 </div>
 
                                 <!-- Aadhaar Upload -->
-                                <div class="space-y-3">
+                                <div class="space-y-2">
                                     <label class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Aadhaar Card <span class="text-red-500">*</span></label>
                                     <input type="file" id="aadhaar-file-input" accept=".pdf,image/*" class="hidden">
-                                    <div onclick="document.getElementById('aadhaar-file-input').click()" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border-2 border-dashed border-slate-200 dark:border-slate-800 flex items-center gap-4 cursor-pointer hover:border-blue-500 group transition-all">
-                                        <div class="w-10 h-10 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center text-blue-500 shadow-sm group-hover:scale-110 transition-transform">
-                                            <i class="fas fa-id-card"></i>
+                                    <div onclick="document.getElementById('aadhaar-file-input').click()" class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900/40 border-2 border-dashed border-slate-200 dark:border-slate-800 flex items-center gap-3 cursor-pointer hover:border-blue-500 group transition-all">
+                                        <div class="w-8 h-8 bg-white dark:bg-slate-800 rounded-lg flex items-center justify-center text-blue-500 shadow-sm group-hover:scale-110 transition-transform">
+                                            <i class="fas fa-id-card text-sm"></i>
                                         </div>
                                         <div class="flex-1 min-w-0">
-                                            <p id="aadhaar-upload-label" class="text-xs font-bold text-slate-400 truncate">Front & Back (Single File)</p>
+                                            <p id="aadhaar-upload-label" class="text-[11px] font-bold text-slate-400 truncate">Front & Back (Single File)</p>
                                         </div>
                                     </div>
-                                    <div id="aadhaar-progress-bar" class="hidden h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                    <div id="aadhaar-progress-bar" class="hidden h-1 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mt-2">
                                         <div id="aadhaar-progress-fill" class="h-full bg-blue-600 transition-all duration-300"></div>
                                     </div>
                                     <input type="hidden" name="aadhaarUrl" id="aadhaar-url-hidden">
                                 </div>
                             </div>
                             
-                            <div class="glass-card-premium p-8 rounded-[2.5rem]">
+                            <div class="glass-card-premium p-6 md:p-8 rounded-3xl">
                                 <label for="prof-notes" class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Cover Note</label>
                                 <textarea id="prof-notes" name="notes" rows="3" class="theme-input !bg-transparent border-none p-0 mt-2 resize-none text-sm" placeholder="Tell us something about yourself..."></textarea>
                             </div>
@@ -915,11 +941,11 @@
                     </div>
 
                     <div class="flex items-center justify-between">
-                        <button type="button" onclick="window.prevStep(3)" class="btn-secondary px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-widest">
+                        <button type="button" onclick="window.prevStep(3)" class="btn-secondary px-6 py-3.5 rounded-xl font-bold text-sm uppercase tracking-widest">
                             <i class="fas fa-chevron-left mr-2"></i> Back
                         </button>
-                        <button type="submit" class="btn-primary px-12 py-4 text-xl rounded-2xl group shadow-2xl shadow-blue-500/40 bg-gradient-to-r from-blue-600 to-indigo-600">
-                            Complete Profile Setup
+                        <button type="submit" class="btn-primary px-8 py-3.5 text-base rounded-xl group shadow-lg shadow-blue-500/40 bg-gradient-to-r from-blue-600 to-indigo-600">
+                            Complete Setup
                             <i class="fas fa-check-circle ml-2 group-hover:scale-110 transition-transform"></i>
                         </button>
                     </div>
@@ -1163,7 +1189,7 @@
         </div>
 
         <!-- Job Details View -->
-        <div id="job-details-view" class="hidden max-w-[1600px] mx-auto py-8 space-y-6 animate-push-in">
+        <div id="job-details-view" class="hidden max-w-[1600px] mx-auto py-4 md:py-8 space-y-4 md:space-y-6 animate-push-in">
             <div class="flex items-center gap-4">
                 <button onclick="window.showView('portal-view')"
                     class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
@@ -1179,17 +1205,19 @@
             </div>
 
             <!-- Header Card -->
-            <div class="glass-card rounded-3xl p-8 flex flex-col md:flex-row gap-6 items-start md:items-center">
-                <div
-                    class="w-16 h-16 bg-blue-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-3xl text-blue-600 flex-shrink-0">
-                    <i class="fas fa-briefcase"></i>
+            <div class="glass-card rounded-3xl p-5 md:p-8 flex flex-col md:flex-row gap-4 md:gap-6 items-start md:items-center">
+                <div class="flex items-center gap-4 w-full md:w-auto flex-1">
+                    <div
+                        class="w-12 h-12 md:w-16 md:h-16 bg-blue-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-xl md:text-3xl text-blue-600 flex-shrink-0">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h2 id="jd-title" class="text-xl md:text-3xl font-black text-slate-900 dark:text-white leading-tight">Job Title
+                        </h2>
+                        <p id="jd-company" class="text-slate-500 font-medium mt-0.5 md:mt-1 text-sm md:text-base">Company Name</p>
+                    </div>
                 </div>
-                <div class="flex-1">
-                    <h2 id="jd-title" class="text-3xl font-black text-slate-900 dark:text-white leading-tight">Job Title
-                    </h2>
-                    <p id="jd-company" class="text-slate-500 font-medium mt-1">Company Name</p>
-                </div>
-                <div class="flex flex-wrap gap-2 md:w-1/3 justify-start md:justify-end">
+                <div class="flex flex-wrap gap-2 md:w-1/3 justify-start md:justify-end w-full md:mt-0">
                     <span id="jd-location"
                         class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold rounded-xl"><i
                             class="fas fa-location-dot mr-1"></i>Location</span>
@@ -1205,7 +1233,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative items-start">
                 <!-- Main Content -->
                 <div class="md:col-span-2 space-y-6">
-                    <div class="glass-card rounded-3xl p-8">
+                    <div class="glass-card rounded-3xl p-5 md:p-8">
                         <h3 class="text-lg font-black text-slate-800 dark:text-white mb-4">Job Description</h3>
                         <div id="jd-desc"
                             class="prose prose-sm dark:prose-invert max-w-none text-slate-600 dark:text-slate-300 leading-relaxed space-y-4">
@@ -1216,14 +1244,14 @@
 
                 <!-- Sidebar -->
                 <div class="space-y-6 sticky top-24">
-                    <div class="glass-card rounded-3xl p-6">
+                    <div class="glass-card rounded-3xl p-5 md:p-6">
                         <h3 class="text-sm font-black uppercase tracking-widest text-slate-800 dark:text-white mb-4">
                             Role Requirements</h3>
                         <div id="jd-reqs" class="space-y-3 text-sm text-slate-600 dark:text-slate-300">
                             <!-- Dynamic Content -->
                         </div>
                     </div>
-                    <div class="glass-card rounded-3xl p-6">
+                    <div class="glass-card rounded-3xl p-5 md:p-6">
                         <h3 class="text-sm font-black uppercase tracking-widest text-slate-800 dark:text-white mb-4">Key
                             Skills</h3>
                         <div id="jd-skills" class="flex flex-wrap gap-2">
@@ -1990,6 +2018,14 @@
                 if (radio) radio.checked = true;
             }
 
+            // Sync skills to pills
+            if (currentProfile.skills) {
+                selectedSkills = currentProfile.skills.split(',').map(s => s.trim()).filter(s => s);
+            } else {
+                selectedSkills = [];
+            }
+            if (typeof renderSkills === 'function') renderSkills();
+
             // Reset stepper
             profileStep = 1;
             for (let i = 1; i <= totalSteps; i++) {
@@ -2016,6 +2052,9 @@
 
             // Personal
             document.getElementById('prof-personal-details').innerHTML = `
+                <div class="flex justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <span class="text-slate-400">Date of Birth</span><span class="font-bold text-slate-800 dark:text-slate-200">${p.dob || '—'}</span>
+                </div>
                 <div class="flex justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
                     <span class="text-slate-400">Gender</span><span class="font-bold text-slate-800 dark:text-slate-200">${p.gender || '—'}</span>
                 </div>
@@ -2313,16 +2352,19 @@
             // Action button logic
             const container = document.getElementById('jd-action-container');
             const applied = myApplications.find(a => a.jobId === job.id);
+            const isLoggedIn = !!currentUser;
+            const incompleteProfile = isLoggedIn && (!currentProfile || !currentProfile.resumeUrl || !currentProfile.aadhaarUrl);
 
             let applyBtnHtml = '';
-            const incompleteProfile = !currentProfile || !currentProfile.resumeUrl || !currentProfile.aadhaarUrl;
 
             if (applied) {
-                applyBtnHtml = `<button disabled class="btn-secondary px-6 cursor-not-allowed opacity-70"><i class="fas fa-check-circle text-emerald-500 mr-2"></i>Applied</button>`;
+                applyBtnHtml = `<button disabled class="btn-secondary px-6 w-full cursor-not-allowed opacity-70"><i class="fas fa-check-circle text-emerald-500 mr-2"></i>Applied</button>`;
+            } else if (!isLoggedIn) {
+                applyBtnHtml = `<button onclick="window.pendingJobId = '${job.id}'; window.toggleAuthModal(true, 'register')" class="btn-primary bg-amber-500 hover:bg-amber-600 w-full px-6 whitespace-nowrap"><i class="fas fa-user-plus mr-2"></i>Complete Profile to Apply</button>`;
             } else if (incompleteProfile) {
-                applyBtnHtml = `<button onclick="window.openEditProfile()" class="btn-primary bg-amber-500 hover:bg-amber-600 px-6 whitespace-nowrap"><i class="fas fa-exclamation-circle mr-2"></i>Complete Profile to Apply</button>`;
+                applyBtnHtml = `<button onclick="window.openEditProfile()" class="btn-primary bg-amber-500 hover:bg-amber-600 w-full px-6 whitespace-nowrap"><i class="fas fa-exclamation-circle mr-2"></i>Complete Profile to Apply</button>`;
             } else {
-                applyBtnHtml = `<button onclick="applyToJob('${job.id}'); showView('portal-view');" class="btn-primary px-6">${portalSettings?.customCtaText || 'Apply Now'}</button>`;
+                applyBtnHtml = `<button onclick="applyToJob('${job.id}'); showView('portal-view');" class="btn-primary w-full px-6">${portalSettings?.customCtaText || 'Apply Now'}</button>`;
             }
 
             container.innerHTML = `
@@ -2365,11 +2407,14 @@
 
             container.innerHTML = filteredJobs.map((job, index) => {
                 const applied = myApplications.find(a => a.jobId === job.id);
-                const incompleteProfile = !currentProfile || !currentProfile.resumeUrl || !currentProfile.aadhaarUrl;
+                const isLoggedIn = !!currentUser;
+                const incompleteProfile = isLoggedIn && (!currentProfile || !currentProfile.resumeUrl || !currentProfile.aadhaarUrl);
 
                 let btnHtml = '';
                 if (applied) {
                     btnHtml = `<button onclick="event.stopPropagation()" disabled class="btn-secondary w-full cursor-not-allowed opacity-70"><i class="fas fa-check-circle text-emerald-500"></i> Applied</button>`;
+                } else if (!isLoggedIn) {
+                    btnHtml = `<button onclick="event.stopPropagation(); window.pendingJobId = '${job.id}'; window.toggleAuthModal(true, 'register')" class="btn-primary bg-amber-500 hover:bg-amber-600 w-full text-xs"><i class="fas fa-user-plus mr-1"></i> Complete Profile</button>`;
                 } else if (incompleteProfile) {
                     btnHtml = `<button onclick="event.stopPropagation(); window.openEditProfile()" class="btn-primary bg-amber-500 hover:bg-amber-600 w-full text-xs"><i class="fas fa-exclamation-circle mr-1"></i> Complete Profile</button>`;
                 } else {
@@ -2549,6 +2594,112 @@
         if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             setDark(true);
         }
+
+        // --- AI SKILL SELECTOR LOGIC ---
+        const PREDEFINED_SKILLS = [
+            "HR", "HRMS", "Recruitment", "Talent Acquisition", "Employee Relations", "Payroll", "Onboarding", "Training",
+            "JavaScript", "Python", "Java", "C++", "C#", "React", "Node.js", "Angular", "Vue.js", "HTML", "CSS", "Tailwind CSS",
+            "SQL", "MongoDB", "PostgreSQL", "AWS", "Azure", "GCP", "Docker", "Kubernetes", "CI/CD",
+            "Project Management", "Agile", "Scrum", "Product Management", "Data Analysis", "Machine Learning", "AI",
+            "Sales", "Marketing", "SEO", "Content Writing", "Graphic Design", "UI/UX Design", "Figma", "Operations"
+        ];
+        
+        const skillsContainer = document.getElementById('skills-container');
+        const skillsInput = document.getElementById('prof-skills-input');
+        const skillsHidden = document.getElementById('prof-skills-hidden');
+        const suggestionsBox = document.getElementById('skills-suggestions');
+        let selectedSkills = [];
+
+        window.renderSkills = () => {
+            // Remove existing pills
+            document.querySelectorAll('.skill-pill').forEach(el => el.remove());
+            
+            // Render pills
+            selectedSkills.forEach(skill => {
+                const pill = document.createElement('div');
+                pill.className = 'skill-pill flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-[11px] font-black uppercase tracking-widest rounded-lg border border-blue-200 dark:border-blue-800 animate-push-in';
+                pill.innerHTML = `<span>${skill}</span> <i class="fas fa-times cursor-pointer hover:text-red-500 transition-colors ml-1" onclick="removeSkill('${skill}')"></i>`;
+                skillsContainer.insertBefore(pill, skillsInput);
+            });
+            
+            skillsHidden.value = selectedSkills.join(', ');
+        };
+
+        window.removeSkill = (skillToRemove) => {
+            selectedSkills = selectedSkills.filter(s => s !== skillToRemove);
+            renderSkills();
+        };
+
+        window.addSkill = (skill) => {
+            const cleanSkill = skill.trim();
+            if (cleanSkill && !selectedSkills.includes(cleanSkill)) {
+                selectedSkills.push(cleanSkill);
+                renderSkills();
+            }
+            skillsInput.value = '';
+            closeSuggestions();
+            skillsInput.focus();
+        };
+
+        const closeSuggestions = () => {
+            suggestionsBox.classList.add('opacity-0', 'translate-y-2');
+            setTimeout(() => suggestionsBox.classList.add('hidden'), 200);
+        };
+
+        const showSuggestions = (query) => {
+            const exactMatch = PREDEFINED_SKILLS.find(s => s.toLowerCase() === query.toLowerCase());
+            const filtered = PREDEFINED_SKILLS.filter(s => 
+                s.toLowerCase().includes(query.toLowerCase()) && !selectedSkills.includes(s)
+            );
+            
+            let html = '';
+            
+            if (query.trim() !== '' && !exactMatch && !selectedSkills.includes(query.trim())) {
+                html += `<div class="p-3 text-sm font-black text-blue-600 dark:text-blue-400 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center gap-2" onclick="addSkill('${query}')"><i class="fas fa-plus bg-blue-100 dark:bg-blue-900/50 p-1 rounded"></i> Add custom: "${query}"</div>`;
+            }
+            
+            if (filtered.length > 0) {
+                html += `<div class="px-3 pt-3 pb-2 text-[10px] font-black text-blue-500 dark:text-blue-400 uppercase tracking-widest flex items-center gap-2 border-b border-slate-100 dark:border-slate-700/50 bg-slate-50 mb-1 dark:bg-slate-800/80 sticky top-0 z-10"><i class="fas fa-wand-magic-sparkles"></i> AI Matching Results</div>`;
+                html += filtered.map(s => 
+                    `<div class="p-3 text-sm font-medium text-slate-700 dark:text-slate-200 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 border-b border-slate-100 dark:border-slate-700/50 last:border-0 flex items-center justify-between group" onclick="addSkill('${s}')">
+                        <div class="flex items-center gap-2"><i class="fas fa-sparkles text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity text-[10px]"></i> ${s}</div>
+                        <span class="text-[9px] font-bold text-slate-300 group-hover:text-blue-500 uppercase tracking-widest transition-colors">Select</span>
+                    </div>`
+                ).join('');
+            }
+
+            if (html === '') {
+                closeSuggestions();
+                return;
+            }
+
+            suggestionsBox.innerHTML = html;
+            suggestionsBox.classList.remove('hidden');
+            setTimeout(() => suggestionsBox.classList.remove('opacity-0', 'translate-y-2'), 10);
+        };
+
+        skillsInput.addEventListener('input', (e) => {
+            showSuggestions(e.target.value);
+        });
+
+        skillsInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); 
+                if (skillsInput.value.trim()) addSkill(skillsInput.value);
+            } else if (e.key === 'Backspace' && skillsInput.value === '' && selectedSkills.length > 0) {
+                removeSkill(selectedSkills[selectedSkills.length - 1]);
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!skillsContainer.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                closeSuggestions();
+            }
+        });
+        
+        skillsInput.addEventListener('focus', () => {
+            showSuggestions(skillsInput.value);
+        });
     </script>
 </body>
 
