@@ -208,6 +208,7 @@
             animation: fadeIn 0.4s ease-out forwards;
         }
 
+
         /* Stepper & Form Transitions */
         .step-content {
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1294,6 +1295,51 @@
         </div>
     </div>
 
+    <!-- Guided AI Job Chatbot Assistant -->
+    <div id="ai-chat-widget" class="fixed bottom-24 md:bottom-8 right-6 z-[60] flex flex-col items-end pointer-events-none">
+        
+        <!-- Chat Window (Hidden by default) -->
+        <div id="ai-chat-window" class="pointer-events-auto w-[340px] sm:w-[380px] glass-card-premium rounded-3xl shadow-[0_20px_50px_-12px_rgba(59,130,246,0.25)] overflow-hidden mb-4 transition-all duration-300 origin-bottom-right scale-0 opacity-0 flex flex-col h-[500px] border border-slate-200 dark:border-slate-700/80">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-4 flex items-center justify-between shadow-md z-10 relative">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-white/20 flex flex-shrink-0 items-center justify-center text-white relative">
+                        <i class="fas fa-robot text-xl"></i>
+                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 border-2 border-indigo-600 rounded-full"></span>
+                    </div>
+                    <div>
+                        <h4 class="text-white font-black leading-tight text-sm">Career Assistant</h4>
+                        <p class="text-blue-100 text-[9px] font-bold uppercase tracking-widest flex items-center gap-1"><i class="fas fa-wand-magic-sparkles text-[8px]"></i> AI Powered</p>
+                    </div>
+                </div>
+                <button onclick="window.toggleChatbot()" class="text-white/70 hover:text-white transition-colors w-8 h-8 flex items-center justify-center rounded-xl hover:bg-white/10">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Chat History -->
+            <div id="ai-chat-history" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/80 dark:bg-slate-900/80 custom-scrollbar flex flex-col pt-6 pb-24 relative">
+                <!-- Messages populated via JS -->
+            </div>
+            
+            <!-- Input Area -->
+            <div id="ai-chat-input-area" class="p-3 border-t border-slate-200 dark:border-slate-700/80 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md absolute bottom-0 w-full z-20">
+                <form id="ai-chat-form" onsubmit="window.handleChatSubmit(event)" class="relative flex items-center">
+                    <input type="text" id="ai-chat-input" class="w-full bg-slate-100 dark:bg-slate-900/80 border-none rounded-[1rem] pl-4 pr-12 py-3 text-sm focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all dark:text-white" placeholder="Type a message..." autocomplete="off">
+                    <button type="submit" class="absolute right-2 w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-[0.6rem] flex items-center justify-center transition-transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-paper-plane text-xs"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Chat Toggle Button -->
+        <button onclick="window.toggleChatbot()" id="ai-chat-toggle" class="pointer-events-auto bg-gradient-to-r from-blue-600 to-indigo-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/40 hover:shadow-blue-500/60 hover:-translate-y-1 transition-all group z-10 hover:ring-4 ring-blue-500/20">
+            <i id="ai-chat-icon-robot" class="fas fa-robot text-2xl animate-fade-in relative z-10"></i>
+            <i id="ai-chat-icon-close" class="fas fa-times text-xl hidden animate-fade-in relative z-10"></i>
+        </button>
+    </div>
+
     <!-- Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -1966,6 +2012,23 @@
             }
 
             openJobs = fetchedJobs;
+            
+            // Extract unique skills from open jobs
+            let extractedSkills = [];
+            fetchedJobs.forEach(job => {
+                let s = job.skills || job.keySkills || '';
+                if (Array.isArray(s)) s = s.join(',');
+                if (typeof s === 'string') {
+                    s.split(',').forEach(term => {
+                        let clean = term.trim();
+                        if (clean && clean.length > 1) extractedSkills.push(clean);
+                    });
+                }
+            });
+            if (typeof window.mergeDynamicSkills === 'function') {
+                window.mergeDynamicSkills(extractedSkills);
+            }
+
             populateFilterDropdowns();
             renderJobs();
         };
@@ -2596,13 +2659,18 @@
         }
 
         // --- AI SKILL SELECTOR LOGIC ---
-        const PREDEFINED_SKILLS = [
+        let PREDEFINED_SKILLS = [
             "HR", "HRMS", "Recruitment", "Talent Acquisition", "Employee Relations", "Payroll", "Onboarding", "Training",
             "JavaScript", "Python", "Java", "C++", "C#", "React", "Node.js", "Angular", "Vue.js", "HTML", "CSS", "Tailwind CSS",
             "SQL", "MongoDB", "PostgreSQL", "AWS", "Azure", "GCP", "Docker", "Kubernetes", "CI/CD",
             "Project Management", "Agile", "Scrum", "Product Management", "Data Analysis", "Machine Learning", "AI",
             "Sales", "Marketing", "SEO", "Content Writing", "Graphic Design", "UI/UX Design", "Figma", "Operations"
         ];
+
+        window.mergeDynamicSkills = (skillsArray) => {
+            const unique = new Set([...PREDEFINED_SKILLS, ...skillsArray]);
+            PREDEFINED_SKILLS = Array.from(unique);
+        };
         
         const skillsContainer = document.getElementById('skills-container');
         const skillsInput = document.getElementById('prof-skills-input');
@@ -2700,6 +2768,315 @@
         skillsInput.addEventListener('focus', () => {
             showSuggestions(skillsInput.value);
         });
+
+        // --- GUIDED AI JOB CHATBOT ASSISTANT LOGIC ---
+        const chatWindow = document.getElementById('ai-chat-window');
+        const chatHistory = document.getElementById('ai-chat-history');
+        const chatInput = document.getElementById('ai-chat-input');
+        
+        let chatState = 0; // 0: Start/Ask Role, 1: Ask Location, 2: Analyzing, 3: Restart
+        let chatData = { role: '', location: '' };
+        let hasOpenedChat = false;
+
+        window.toggleChatbot = () => {
+            const isClosed = chatWindow.classList.contains('scale-0');
+            const iconRobot = document.getElementById('ai-chat-icon-robot');
+            const iconClose = document.getElementById('ai-chat-icon-close');
+
+            if (isClosed) {
+                chatWindow.classList.remove('scale-0', 'opacity-0');
+                if (iconRobot) iconRobot.classList.add('hidden');
+                if (iconClose) iconClose.classList.remove('hidden');
+
+                if (!hasOpenedChat) {
+                    hasOpenedChat = true;
+                    setTimeout(() => {
+                        addBotMessage("Hi! I'm your AI Recruitment Assistant. ✨");
+                        setTimeout(() => {
+                            addBotMessage("What kind of role are you looking for?");
+                            addBotOptions(["Developer", "Operations", "Sales", "HR", "Browse All"]);
+                        }, 800);
+                    }, 400);
+                }
+                setTimeout(() => chatInput.focus(), 300);
+            } else {
+                chatWindow.classList.add('scale-0', 'opacity-0');
+                if (iconRobot) iconRobot.classList.remove('hidden');
+                if (iconClose) iconClose.classList.add('hidden');
+            }
+        };
+
+        const addBotOptions = (options) => {
+            const container = document.createElement('div');
+            container.className = 'flex flex-wrap gap-2 pl-12 mt-1 mb-4 animate-fade-in group-options';
+            options.forEach(opt => {
+                const pill = document.createElement('button');
+                pill.className = 'px-3.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-all shadow-sm active:scale-95';
+                pill.innerText = opt;
+                pill.onclick = () => {
+                    // Disable all buttons in this container after click
+                    container.querySelectorAll('button').forEach(b => b.disabled = true);
+                    window.handleChipClick(opt);
+                };
+                container.appendChild(pill);
+            });
+            chatHistory.appendChild(container);
+            scrollToBottom();
+        };
+
+        window.handleChipClick = (val) => {
+            addUserMessage(val);
+            processChatInput(val);
+        };
+
+        const addBotMessage = (msg) => {
+            const html = `
+                <div class="flex items-end gap-2 w-full animate-fade-in pr-6">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-800 flex-shrink-0 flex items-center justify-center text-blue-600 shadow-sm relative bottom-1">
+                        <i class="fas fa-robot text-xs"></i>
+                    </div>
+                    <div class="bg-white dark:bg-slate-800 px-4 py-2.5 rounded-2xl rounded-bl-sm border border-slate-100 dark:border-slate-700 shadow-sm">
+                        <p class="text-sm text-slate-700 dark:text-slate-200 leading-relaxed">${msg}</p>
+                    </div>
+                </div>
+            `;
+            chatHistory.insertAdjacentHTML('beforeend', html);
+            scrollToBottom();
+        };
+
+        const addBotJobCard = (job) => {
+            const html = `
+                <div class="flex items-end gap-2 w-full animate-fade-in pr-3 mt-1 mb-2">
+                    <div class="w-8 h-8 rounded-full bg-transparent flex-shrink-0"></div>
+                    <div class="bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-900/20 dark:to-emerald-800/10 p-4 rounded-3xl rounded-bl-sm border border-emerald-200 dark:border-emerald-800/50 shadow-sm w-full cursor-pointer hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700 transition-all group relative overflow-hidden" onclick="window.viewJobDetails('${job.id}')">
+                        <div class="absolute -top-4 -right-4 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 mb-2.5 border border-emerald-200 dark:border-emerald-800/50 shadow-sm"><i class="fas fa-bolt text-[8px] text-yellow-500"></i> AI Match</span>
+                        <h4 class="text-[15px] font-black text-slate-800 dark:text-white group-hover:text-blue-600 transition-colors leading-tight drop-shadow-sm mb-1">${job.title}</h4>
+                        <p class="text-[11px] font-bold text-slate-500 flex items-center gap-1 mb-1"><i class="fas fa-building text-slate-400"></i> ${job.department || 'General'}</p>
+                        <p class="text-[11px] font-bold text-slate-500 flex items-center gap-1"><i class="fas fa-location-dot text-slate-400"></i> ${job.location || 'Remote'}</p>
+                        <button class="mt-4 w-full bg-emerald-500 hover:bg-emerald-600 text-white py-2.5 rounded-xl font-bold text-xs shadow-lg shadow-emerald-500/20 pointer-events-auto flex items-center justify-center gap-2 transition-all group-hover:scale-[1.02]">Open Role <i class="fas fa-arrow-right text-[10px]"></i></button>
+                    </div>
+                </div>
+            `;
+            chatHistory.insertAdjacentHTML('beforeend', html);
+            scrollToBottom();
+        };
+
+        const addUserMessage = (msg) => {
+            const html = `
+                <div class="flex flex-col items-end gap-1 w-full animate-fade-in pl-10 mb-1">
+                    <div class="bg-blue-600 text-white px-4 py-2.5 rounded-2xl rounded-br-sm shadow-sm inline-block">
+                        <p class="text-sm font-medium leading-relaxed">${msg}</p>
+                    </div>
+                </div>
+            `;
+            chatHistory.insertAdjacentHTML('beforeend', html);
+            scrollToBottom();
+        };
+
+        const scrollToBottom = () => {
+             setTimeout(() => {
+                 chatHistory.scroll({ top: chatHistory.scrollHeight, behavior: 'smooth' });
+             }, 50);
+        };
+
+        window.handleChatSubmit = (e) => {
+            e.preventDefault();
+            const text = chatInput.value.trim();
+            if (!text) return;
+            
+            addUserMessage(text);
+            chatInput.value = '';
+            processChatInput(text);
+        };
+
+        const processChatInput = (text) => {
+            const lower = text.toLowerCase();
+
+            // ---- CHIP / ACTION COMMANDS (handled first, always) ----
+
+            if (text === "Close Chat") { window.toggleChatbot(); return; }
+
+            if (text === "My Applications") {
+                setTimeout(() => addBotMessage("Taking you to your applications now! 📋"), 300);
+                setTimeout(() => {
+                    window.toggleChatbot();
+                    const appBtn = document.getElementById('btn-nav-applications')
+                        || document.querySelector('[onclick*="applications"]')
+                        || document.querySelector('[data-section="applications"]');
+                    if (appBtn) appBtn.click();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 900);
+                return;
+            }
+
+            if (text === "Search New Role" || text === "Find a Job" || text === "Browse All" || text === "Try Different Search" || text === "Search Again" || text === "Let's search!") {
+                chatState = 0;
+                chatData = { role: '', location: '' };
+                chatInput.disabled = false;
+                chatInput.placeholder = "Type a role or pick below...";
+                setTimeout(() => {
+                    addBotMessage("Sure! What kind of role are you interested in?");
+                    addBotOptions(["Developer", "Sales", "Marketing", "Operations", "Any"]);
+                }, 400);
+                return;
+            }
+
+            if (text === "Show All Results" || text === "Show All Jobs") {
+                window.toggleChatbot();
+                const searchInput = document.getElementById('job-search-input');
+                if (searchInput) {
+                    searchInput.value = chatData.role === 'any' ? '' : chatData.role;
+                    searchInput.dispatchEvent(new Event('input'));
+                    window.scrollTo({ top: searchInput.offsetTop - 100, behavior: 'smooth' });
+                }
+                return;
+            }
+
+            if (text === "Browse Departments") {
+                window.toggleChatbot();
+                const deptSelect = document.getElementById('job-filter-dept');
+                if (deptSelect) { deptSelect.focus(); window.scrollTo({ top: deptSelect.offsetTop - 100, behavior: 'smooth' }); }
+                return;
+            }
+
+            if (text === "How it works?") {
+                setTimeout(() => {
+                    addBotMessage("It's simple! 🚀");
+                    setTimeout(() => {
+                        addBotMessage("1️⃣ Tell me what role you're looking for.\n2️⃣ Tell me your preferred location.\n3️⃣ I'll find the best match and open it for you instantly!");
+                        setTimeout(() => addBotOptions(["Let's search!", "Close Chat"]), 600);
+                    }, 500);
+                }, 500);
+                return;
+            }
+
+            if (text === "Contact Support") {
+                setTimeout(() => {
+                    addBotMessage("For support, please reach out to your recruiter or contact HR directly. I can still help you find jobs! 💬");
+                    addBotOptions(["Find a Job", "Close Chat"]);
+                }, 600);
+                return;
+            }
+
+            // ---- CONVERSATIONAL INTENTS ----
+            if (lower.includes('thank') || lower.includes('awesome') || lower.includes('great') || lower.includes('cool')) {
+                chatState = 3;
+                setTimeout(() => {
+                    addBotMessage("You're welcome! Happy to help anytime. 😊");
+                    addBotOptions(["Search New Role", "My Applications", "Close Chat"]);
+                }, 600);
+                return;
+            }
+
+            if ((lower.includes('hi') || lower.includes('hello') || lower.includes('hey')) && chatState !== 1) {
+                setTimeout(() => {
+                    addBotMessage("Hello there! 👋 How can I help you in your career journey today?");
+                    addBotOptions(["Find a Job", "How it works?", "Contact Support"]);
+                }, 600);
+                return;
+            }
+
+            // ---- MAIN SEARCH FLOW ----
+            if (chatState === 3) {
+                chatState = 0;
+                chatData = { role: '', location: '' };
+            }
+
+            setTimeout(() => {
+                if (chatState === 0) {
+                    chatData.role = lower;
+
+                    const commonLocs = ['remote', 'mumbai', 'delhi', 'bangalore', 'pune', 'hyderabad', 'chennai', 'gujarat', 'halol', 'anywhere'];
+                    const foundLoc = commonLocs.find(l => lower.includes(l));
+
+                    if (lower === 'any') {
+                        chatData.role = 'any';
+                        chatData.location = 'any';
+                        processMatching();
+                    } else if (foundLoc) {
+                        chatData.location = foundLoc === 'anywhere' ? 'any' : foundLoc;
+                        processMatching();
+                    } else {
+                        chatState = 1;
+                        addBotMessage(`Got it — looking for <strong>${text}</strong> roles. 📍 Where would you like to work?`);
+                        addBotOptions(["Remote", "Halol, Gujrat", "Mumbai", "Anywhere"]);
+                    }
+                } else if (chatState === 1) {
+                    chatData.location = lower.includes('anywhere') ? 'any' : lower;
+                    processMatching();
+                }
+            }, 600);
+        };
+
+        const processMatching = () => {
+            chatState = 2; // finished
+            chatInput.disabled = true;
+            addBotMessage("<span class='text-slate-400 font-medium'>Scanning available jobs... <i class='fas fa-circle-notch fa-spin text-blue-500 ml-1'></i></span>");
+            
+            setTimeout(() => {
+                chatHistory.lastElementChild.remove(); // remove processing message
+                
+                const matches = openJobs.filter(job => {
+                    const cleanTitle = (job.title || '').toLowerCase();
+                    const cleanDept = (job.department || '').toLowerCase();
+                    const cleanSkills = ((job.skills || '') + ',' + (job.keySkills || '')).toLowerCase();
+                    const cleanLoc = (job.location || '').toLowerCase();
+
+                    const roleKeywords = chatData.role.split(' ').filter(k => k.length > 2);
+                    let titleMatch = roleKeywords.length > 0 ? roleKeywords.some(k => cleanTitle.includes(k) || cleanDept.includes(k) || cleanSkills.includes(k)) : true;
+                    
+                    if (!titleMatch && chatData.role.length <= 3) {
+                       titleMatch = cleanTitle.includes(chatData.role) || cleanDept.includes(chatData.role);
+                    }
+                    if (chatData.role === 'any') titleMatch = true;
+
+                    const isAnyLoc = chatData.location.includes('any') || chatData.location.includes('open') || chatData.location.includes('where');
+                    const locMatch = isAnyLoc || cleanLoc.includes(chatData.location);
+                    
+                    return titleMatch && locMatch;
+                });
+
+                if (matches.length > 0) {
+                    const bestMatch = matches[0];
+                    if (matches.length === 1) {
+                        addBotMessage("I found a perfect match for you! 🎯");
+                    } else {
+                        addBotMessage(`I found <strong>${matches.length} relevant positions</strong> for you. Here's the best match:`);
+                    }
+
+                    setTimeout(() => {
+                        addBotJobCard(bestMatch);
+                        chatState = 3; 
+                        chatInput.disabled = false;
+                        chatInput.placeholder = "Ask me anything else...";
+                        
+                        // If multiple matches, give an option to see all
+                        if (matches.length > 1) {
+                            setTimeout(() => {
+                                addBotMessage("Would you like to see all results in the main portal?");
+                                addBotOptions(["Show All Results", "Search Again"]);
+                            }, 1000);
+                        }
+                        
+                        setTimeout(() => {
+                            if (!chatWindow.classList.contains('scale-0')) {
+                                window.viewJobDetails(bestMatch.id);
+                            }
+                        }, 1500);
+                    }, 600);
+                } else {
+                    addBotMessage("<strong>Hmm, I couldn't find a role matching that criteria right now.</strong> 🔍");
+                    setTimeout(() => {
+                        addBotMessage("Don't worry — new roles open up frequently! Here's what you can do:");
+                        addBotOptions(["Browse Departments", "Try Different Search", "Show All Jobs"]);
+                        chatState = 3;
+                        chatInput.disabled = false;
+                        chatInput.placeholder = "Try a different role...";
+                    }, 800);
+                }
+            }, 1200);
+        };
     </script>
 </body>
 
