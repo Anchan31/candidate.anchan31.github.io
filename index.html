@@ -599,7 +599,7 @@
 
     <!-- Navbar -->
     <nav
-        class="sticky top-0 z-50 glass-card border-b border-slate-200 dark:border-slate-800 px-6 md:px-10 py-3 md:py-4">
+        class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-6 md:px-10 py-3 md:py-4 transition-colors">
         <div class="max-w-[1600px] mx-auto flex items-center justify-between">
             <div class="flex items-center gap-2 md:gap-3">
                 <div
@@ -620,9 +620,9 @@
                         class="btn-focus pb-2 border-b-2 border-blue-600 font-bold text-sm transition-all text-blue-600">Browse
                         Jobs</button>
                     <button id="tab-companies"
-                        class="btn-focus pb-2 border-b-2 border-transparent font-bold text-sm transition-all text-slate-500 hover:text-blue-600">Companies</button>
+                        class="btn-focus pb-2 border-b-2 border-transparent font-bold text-sm transition-all text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">Companies</button>
                     <button id="tab-apps"
-                        class="btn-focus pb-2 border-b-2 border-transparent font-bold text-sm transition-all text-slate-500 hover:text-blue-600 hidden">My
+                        class="btn-focus pb-2 border-b-2 border-transparent font-bold text-sm transition-all text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 hidden">My
                         Applications</button>
                 </div>
             </div>
@@ -2323,8 +2323,10 @@
                 // Ensure we are on jobs tab
                 document.getElementById('jobs-pane').classList.remove('hidden');
                 document.getElementById('apps-pane').classList.add('hidden');
-                document.getElementById('tab-jobs').classList.add('bg-white', 'dark:bg-slate-800', 'shadow-sm', 'text-blue-600');
-                document.getElementById('tab-apps').classList.remove('bg-white', 'dark:bg-slate-800', 'shadow-sm', 'text-blue-600');
+                document.getElementById('tab-jobs').classList.add('text-blue-600', 'border-blue-600');
+                document.getElementById('tab-jobs').classList.remove('text-slate-500', 'border-transparent');
+                document.getElementById('tab-apps').classList.remove('text-blue-600', 'border-blue-600');
+                document.getElementById('tab-apps').classList.add('text-slate-500', 'border-transparent');
             }
         };
 
